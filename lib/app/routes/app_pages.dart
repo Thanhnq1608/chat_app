@@ -4,7 +4,7 @@ import 'package:chat_app/app/routes/app_routes.dart';
 import 'package:get/get.dart';
 
 class AppPages {
-  static const INITIAL = AppRoutes.SPLASH;
+  static final INITIAL = AppRoutes.HOME;
 
   static final pages = [
     GetPage(
