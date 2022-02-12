@@ -1,5 +1,6 @@
 import 'package:chat_app/app/routes/app_pages.dart';
 import 'package:chat_app/app/routes/app_routes.dart';
+import 'package:chat_app/core/models/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -18,9 +19,7 @@ class MyApp extends StatelessWidget {
         SystemUiOverlayStyle(statusBarColor: Colors.transparent));
     return GetMaterialApp(
       defaultTransition: Transition.rightToLeft,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: AppTheme.dark,
       debugShowCheckedModeBanner: false,
       getPages: AppPages.pages,
       initialRoute: AppPages.INITIAL,

@@ -9,7 +9,7 @@ class User {
 
   static List<User> generateUsers() {
     return [
-      User(id: 1, name: 'THanh', userColor: Colors.white38),
+      User(id: 1, name: 'Thanh', userColor: Colors.deepPurpleAccent),
       User(id: 2, name: 'Hoang Anh', userColor: Colors.blueAccent),
       User(id: 3, name: 'Nam', userColor: Colors.amberAccent),
       User(id: 4, name: 'Bich', userColor: Colors.cyan),

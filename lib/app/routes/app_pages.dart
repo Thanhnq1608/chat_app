@@ -1,4 +1,7 @@
+import 'package:chat_app/app/page/home/home_binding.dart';
 import 'package:chat_app/app/page/home/home_screen.dart';
+import 'package:chat_app/app/page/home/widgets/message.dart';
+import 'package:chat_app/app/page/message_detail/message_detail_screen.dart';
 import 'package:chat_app/app/page/splash/splash_screen.dart';
 import 'package:chat_app/app/routes/app_routes.dart';
 import 'package:get/get.dart';
@@ -14,6 +17,11 @@ class AppPages {
     GetPage(
       name: AppRoutes.HOME,
       page: () => HomeScreen(),
+      binding: HomeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.MESSAGE,
+      page: () => MessageDetailScreen(),
     ),
   ];
 }

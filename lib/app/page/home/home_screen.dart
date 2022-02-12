@@ -1,6 +1,10 @@
+import 'package:chat_app/app/page/home/home_controller.dart';
+import 'package:chat_app/app/page/home/widgets/message.dart';
+import 'package:chat_app/app/page/home/widgets/recent_contacts.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends GetView<HomeController> {
   const HomeScreen({Key? key}) : super(key: key);
 
   final double maxHeight = 80;
@@ -27,6 +31,7 @@ class HomeScreen extends StatelessWidget {
           ];
         },
         body: Container(
+          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
           height: double.infinity,
           width: double.infinity,
           decoration: BoxDecoration(
@@ -36,6 +41,7 @@ class HomeScreen extends StatelessWidget {
               topRight: Radius.circular(50),
             ),
           ),
+          child: Message(),
         ),
       ),
     );
@@ -75,7 +81,7 @@ class HomeScreen extends StatelessWidget {
       child: Text(
         'Chat with your friends',
         textAlign: TextAlign.left,
-        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+        style: Theme.of(context).textTheme.headline1!.copyWith(
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -94,12 +100,16 @@ class HomeScreen extends StatelessWidget {
           Text(
             'Chat with \nyour friends',
             textAlign: TextAlign.left,
-            style: Theme.of(context).textTheme.bodyText1!.copyWith(
+            style: Theme.of(context).textTheme.headline1!.copyWith(
                   color: Colors.white,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
           ),
+          SizedBox(
+            height: 25,
+          ),
+          RecentContacts(),
         ],
       ),
     );
