@@ -1,3 +1,5 @@
+import 'package:chat_app/app/page/create_account/sign_up_binding.dart';
+import 'package:chat_app/app/page/create_account/sign_up_screen.dart';
 import 'package:chat_app/app/page/home/home_binding.dart';
 import 'package:chat_app/app/page/home/home_screen.dart';
 import 'package:chat_app/app/page/home/widgets/message.dart';
@@ -29,6 +31,11 @@ class AppPages {
       name: AppRoutes.LOGIN,
       page: () => LoginScreen(),
       binding: LoginBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.SIGN_UP,
+      page: () => SignUpScreen(),
+      binding: SignUpBinding(),
     ),
   ];
 }

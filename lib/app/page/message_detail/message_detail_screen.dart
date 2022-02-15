@@ -30,7 +30,9 @@ class MessageDetailScreen extends StatelessWidget {
       backgroundColor: Color(0xFF5157b2),
       elevation: 0,
       leading: TextButton(
-        onPressed: () {},
+        onPressed: () {
+          Get.back();
+        },
         child: Text(
           'Back',
           style: Theme.of(context).textTheme.button!.copyWith(),

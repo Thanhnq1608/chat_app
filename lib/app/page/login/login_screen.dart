@@ -1,6 +1,7 @@
 import 'package:chat_app/app/components/form_input.dart';
 import 'package:chat_app/app/page/login/login_controller.dart';
 import 'package:chat_app/app/page/login/widgets/buntton_login_screen.dart';
+import 'package:chat_app/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -46,6 +47,7 @@ class LoginScreen extends GetView<LoginController> {
                     ),
               ),
               InkWell(
+                onTap: () => Get.toNamed(AppRoutes.SIGN_UP),
                 child: Text(
                   'Register now',
                   style: Theme.of(context).textTheme.bodyText1!.copyWith(

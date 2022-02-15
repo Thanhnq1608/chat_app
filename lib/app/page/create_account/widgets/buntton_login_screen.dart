@@ -1,4 +1,3 @@
-import 'package:chat_app/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,29 +6,26 @@ class ButtonLoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: Column(
-        children: [
-          _button(
-            context,
-            handleButton: () {
-              Get.offNamed(AppRoutes.HOME);
-            },
-            title: 'Sign In',
-            backgroundColor: Color(0xFF5157b2),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          _button(
-            context,
-            handleButton: () {},
-            title: 'Sign In with Google',
-            backgroundColor: Colors.white,
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        _button(
+          context,
+          handleButton: () {},
+          title: 'Sign Up',
+          backgroundColor: Color(0xFF5157b2),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        _button(
+          context,
+          handleButton: () {
+            Get.back();
+          },
+          title: 'Cancel',
+          backgroundColor: Colors.white,
+        ),
+      ],
     );
   }
 
