@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ButtonLoginScreen extends StatelessWidget {
-  const ButtonLoginScreen({Key? key}) : super(key: key);
+  Function() clickToSignIn;
+  ButtonLoginScreen({Key? key, required this.clickToSignIn})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,9 +15,7 @@ class ButtonLoginScreen extends StatelessWidget {
         children: [
           _button(
             context,
-            handleButton: () {
-              Get.offNamed(AppRoutes.HOME);
-            },
+            handleButton: clickToSignIn,
             title: 'Sign In',
             backgroundColor: Color(0xFF5157b2),
           ),

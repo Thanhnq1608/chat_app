@@ -10,56 +10,70 @@ class LoginScreen extends GetView<LoginController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black87,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _body(context),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 30),
-            alignment: Alignment.centerRight,
-            child: Text(
-              'Forget password?',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1!
-                  .copyWith(color: Colors.white),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          ButtonLoginScreen(),
-          SizedBox(
-            height: 15,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Don\'t have account? ',
-                style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      color: Colors.white,
-                      fontSize: 15,
-                    ),
-              ),
-              InkWell(
-                onTap: () => Get.toNamed(AppRoutes.SIGN_UP),
-                child: Text(
-                  'Register now',
-                  style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                        decoration: TextDecoration.underline,
-                        color: Colors.white,
-                        fontSize: 15,
-                      ),
-                ),
+      body: Obx(
+        () => controller.isLoading.value
+            ? Center(
+                child: CircularProgressIndicator(),
               )
-            ],
-          )
-        ],
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _body(context),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      'Forget password?',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1!
+                          .copyWith(color: Colors.white),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ButtonLoginScreen(
+                    clickToSignIn: () {
+                      controller.login(
+                        email: controller.emailController.text,
+                        password: controller.passwordContoller.text,
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Don\'t have account? ',
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
+                      ),
+                      InkWell(
+                        onTap: () => Get.toNamed(AppRoutes.SIGN_UP),
+                        child: Text(
+                          'Register now',
+                          style:
+                              Theme.of(context).textTheme.bodyText1!.copyWith(
+                                    decoration: TextDecoration.underline,
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                  ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
       ),
     );
   }

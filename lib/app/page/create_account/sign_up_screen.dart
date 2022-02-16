@@ -1,6 +1,7 @@
 import 'package:chat_app/app/components/form_input.dart';
 import 'package:chat_app/app/page/create_account/sign_up_controller.dart';
 import 'package:chat_app/app/page/create_account/widgets/buntton_login_screen.dart';
+import 'package:chat_app/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,7 +12,13 @@ class SignUpScreen extends GetView<SignUpController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black87,
-      body: _body(context),
+      body: Obx(
+        () => controller.isLoading.value
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : _body(context),
+      ),
     );
   }
 
@@ -52,7 +59,15 @@ class SignUpScreen extends GetView<SignUpController> {
           SizedBox(
             height: 30,
           ),
-          ButtonLoginScreen(),
+          ButtonLoginScreen(
+            clickToSignUp: () async {
+              final result = await controller.signUp();
+              if (result) {
+                Get.snackbar('', 'Sign up success');
+                Get.toNamed(AppRoutes.LOGIN);
+              }
+            },
+          ),
         ],
       ),
     );
