@@ -1,12 +1,31 @@
+import 'package:chat_app/app/app_bindings.dart';
 import 'package:chat_app/app/routes/app_pages.dart';
 import 'package:chat_app/app/routes/app_routes.dart';
 import 'package:chat_app/core/models/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initServices();
   runApp(const MyApp());
+}
+
+Future<void> initServices() async {
+  print('starting services ...');
+  final app = await Firebase.initializeApp();
+  print("firebase app name: ${app.name}");
+
+  /// Here is where you put get_storage, hive, shared_pref initialization.
+  /// or moor connection, or whatever that's async.
+  // await Get.putAsync(() => SfStorage().initial());
+  // final pushNotificationManager = PushNotificationManager();
+  // await pushNotificationManager.configure();
+  // Get.put(pushNotificationManager);
+
+  // print('All services started...');
 }
 
 class MyApp extends StatelessWidget {
@@ -23,6 +42,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       getPages: AppPages.pages,
       initialRoute: AppPages.INITIAL,
+      initialBinding: AppBindings(),
     );
   }
 }
