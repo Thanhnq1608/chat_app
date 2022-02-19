@@ -8,6 +8,8 @@ class ErrorAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      elevation: 10,
+      backgroundColor: Colors.black87,
       contentPadding: EdgeInsets.zero,
       actionsAlignment: MainAxisAlignment.center,
       shape: RoundedRectangleBorder(
@@ -21,13 +23,19 @@ class ErrorAlertDialog extends StatelessWidget {
             SizedBox(height: 20),
             Text(
               'Error!!',
-              style:
-                  Theme.of(context).textTheme.headline5!.copyWith(fontSize: 24),
+              style: Theme.of(context).textTheme.headline5!.copyWith(
+                    fontSize: 24,
+                    color: Colors.white,
+                  ),
             ),
             SizedBox(height: 4),
             Text(
               error.toString(),
               textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
             ),
             SizedBox(height: 20),
             Divider(height: 1),

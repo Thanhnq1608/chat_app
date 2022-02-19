@@ -1,5 +1,7 @@
 import 'package:chat_app/app/page/create_account/sign_up_binding.dart';
 import 'package:chat_app/app/page/create_account/sign_up_screen.dart';
+import 'package:chat_app/app/page/forget_pass/forget_password_binding.dart';
+import 'package:chat_app/app/page/forget_pass/forget_password_screen.dart';
 import 'package:chat_app/app/page/home/home_binding.dart';
 import 'package:chat_app/app/page/home/home_screen.dart';
 import 'package:chat_app/app/page/home/widgets/message.dart';
@@ -36,6 +38,11 @@ class AppPages {
       name: AppRoutes.SIGN_UP,
       page: () => SignUpScreen(),
       binding: SignUpBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.FORGET_PASS,
+      page: () => ForgetPasswordScreen(),
+      binding: ForgetPasswordBinding(),
     ),
   ];
 }

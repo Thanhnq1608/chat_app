@@ -48,6 +48,7 @@ class SignUpController extends GetxController {
         return true;
       } catch (e) {
         ErrorHandler.current.handle(error: e);
+        isLoading.value = false;
         return false;
       }
     }

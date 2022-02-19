@@ -6,5 +6,6 @@ abstract class AuthServiceType {
   Future signUpWithEmailAndPassword(
       {required String email, required String password});
   Future resetPassword({required String email});
+  Future changePassword({required String email});
   Future signOut();
 }

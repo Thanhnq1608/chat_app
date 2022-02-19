@@ -26,6 +26,8 @@ class LoginController extends GetxController {
       Get.offNamed(AppRoutes.HOME);
     } catch (e) {
       ErrorHandler.current.handle(error: e);
+      isLoading.value = false;
+      rethrow;
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chat_app/app/interfaces/auth_service_type.dart';
 import 'package:chat_app/data/models/user.dart' as userModel;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,6 +7,9 @@ import 'package:get/get.dart';
 
 class AuthService extends GetxService implements AuthServiceType {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Rx<bool> isVerifyEmail = false.obs;
+  Timer? timer;
 
   userModel.User? _userFromFirebaseUser(User? user) {
     return user != null ? userModel.User(userId: user.uid) : null;
@@ -33,18 +38,42 @@ class AuthService extends GetxService implements AuthServiceType {
   }
 
   Future resetPassword({required String email}) async {
-    try {
-      return await _auth.sendPasswordResetEmail(email: email);
-    } catch (e) {
-      print(e);
-    }
+    final result = await _auth.sendPasswordResetEmail(email: email);
+    return result;
   }
 
   Future signOut() async {
-    try {
-      return await _auth.signOut();
-    } catch (e) {
-      print(e);
+    timer?.cancel();
+    return await _auth.signOut();
+  }
+
+  @override
+  Future<bool> changePassword({required String email}) async {
+    isVerifyEmail(_auth.currentUser!.emailVerified);
+
+    if (!isVerifyEmail.value) {
+      _sendVerificationEmail();
+
+      timer = Timer.periodic(Duration(seconds: 1), (_) {
+        checkEmailVerified();
+      });
     }
+
+    return isVerifyEmail.value;
+  }
+
+  Future checkEmailVerified() async {
+    await _auth.currentUser!.reload();
+
+    isVerifyEmail.value = _auth.currentUser!.emailVerified;
+
+    if (isVerifyEmail.value) {
+      timer?.cancel();
+    }
+  }
+
+  Future _sendVerificationEmail() async {
+    final user = _auth.currentUser!;
+    await user.sendEmailVerification();
   }
 }

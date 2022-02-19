@@ -4,4 +4,5 @@ abstract class AppRoutes {
   static final MESSAGE = '/message';
   static final LOGIN = '/login';
   static final SIGN_UP = '/sign_up';
+  static final FORGET_PASS = '/forget_pass';
 }
