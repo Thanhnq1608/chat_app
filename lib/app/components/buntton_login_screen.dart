@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -5,10 +7,12 @@ class ButtonLoginScreen extends StatelessWidget {
   Function() handleButton;
   String title;
   Color backgroundColor;
+  final Function? onclickEnterKey;
   ButtonLoginScreen(
       {Key? key,
       required this.handleButton,
       required this.backgroundColor,
+      this.onclickEnterKey,
       required this.title})
       : super(key: key);
 

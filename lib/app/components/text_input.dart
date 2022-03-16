@@ -20,6 +20,7 @@ class TextInput extends StatelessWidget {
       controller: controller,
       cursorColor: Colors.white,
       cursorHeight: 15,
+      mouseCursor: MouseCursor.uncontrolled,
       style: Theme.of(context)
           .textTheme
           .bodyText1!

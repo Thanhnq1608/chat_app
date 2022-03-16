@@ -23,7 +23,7 @@ class LoginController extends GetxController {
       final result = await _authService.signInWithEmailAndPassword(
           email: email, password: password);
       isLoading.value = false;
-      Get.offNamed(AppRoutes.HOME);
+      Get.offAllNamed(AppRoutes.HOME);
     } catch (e) {
       ErrorHandler.current.handle(error: e);
       isLoading.value = false;

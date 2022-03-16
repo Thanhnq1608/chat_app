@@ -12,9 +12,23 @@ class AuthService extends GetxService implements AuthServiceType {
   Timer? timer;
 
   userModel.User? _userFromFirebaseUser(User? user) {
-    return user != null ? userModel.User(userId: user.uid) : null;
+    return user != null
+        ? userModel.User(userId: user.uid, email: user.email!)
+        : null;
   }
 
+  @override
+  Future<userModel.User> getCurrentUser() async {
+    try {
+      final user = await _auth.currentUser;
+      return _userFromFirebaseUser(user)!;
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  @override
   Future signInWithEmailAndPassword(
       {required String email, required String password}) async {
     UserCredential result = await _auth.signInWithEmailAndPassword(
@@ -25,6 +39,7 @@ class AuthService extends GetxService implements AuthServiceType {
     return _userFromFirebaseUser(user);
   }
 
+  @override
   Future signUpWithEmailAndPassword(
       {required String email, required String password}) async {
     UserCredential result = await _auth.createUserWithEmailAndPassword(
@@ -37,11 +52,13 @@ class AuthService extends GetxService implements AuthServiceType {
     return _userFromFirebaseUser(user);
   }
 
+  @override
   Future resetPassword({required String email}) async {
     final result = await _auth.sendPasswordResetEmail(email: email);
     return result;
   }
 
+  @override
   Future signOut() async {
     timer?.cancel();
     return await _auth.signOut();

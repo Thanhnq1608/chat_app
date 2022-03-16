@@ -38,8 +38,12 @@ class RecentContacts extends StatelessWidget {
                   return Container(
                     height: 50,
                     width: 50,
+                    padding: EdgeInsets.all(10),
                     decoration:
                         BoxDecoration(color: color, shape: BoxShape.circle),
+                    child: CircleAvatar(
+                      backgroundImage: AssetImage(contacts[index].avatar),
+                    ),
                   );
                 },
                 separatorBuilder: (_, index) => SizedBox(

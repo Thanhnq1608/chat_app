@@ -28,6 +28,9 @@ class Message extends StatelessWidget {
                       width: 60,
                       decoration: BoxDecoration(
                           color: user.userColor, shape: BoxShape.circle),
+                      child: CircleAvatar(
+                        backgroundImage: AssetImage(user.avatar),
+                      ),
                     ),
                     SizedBox(
                       width: 15,

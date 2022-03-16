@@ -1,5 +1,6 @@
 import 'package:chat_app/app/page/message_detail/message_detail_controller.dart';
 import 'package:chat_app/app/page/message_detail/widgets/list_message.dart';
+import 'package:chat_app/app/page/message_detail/widgets/text_input_message.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -95,7 +96,19 @@ class MessageDetailScreen extends StatelessWidget {
 
   Widget _body(BuildContext context) {
     return Expanded(
-      child: ListMessage(),
+      child: Column(
+        children: [
+          Expanded(
+            child: ListMessage(),
+          ),
+          TextInputMessage(
+            controller: controller.sendController,
+            onClickSend: () async {
+              await controller.sendMessage();
+            },
+          ),
+        ],
+      ),
     );
   }
 }

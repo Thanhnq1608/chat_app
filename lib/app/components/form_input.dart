@@ -17,7 +17,7 @@ class FormInput extends StatelessWidget {
         ),
         child,
         Divider(
-          height: 1,
+          height: 2,
           color: Colors.white,
         )
       ],
