@@ -12,4 +12,13 @@ class MessageService extends GetxService implements MessageServiceType {
       'sender': email,
     });
   }
+
+  @override
+  Future<void> getMessages() async {
+    await for (var snapshot in _firestore.collection('message').snapshots()) {
+      for (var message in snapshot.docs) {
+        print(message.data()['text']);
+      }
+    }
+  }
 }

@@ -20,6 +20,7 @@ class MessageDetailController extends GetxController {
       try {
         var result = await _messageService.sendMessage(
             message: sendController.text, email: currentUser.email);
+        await _messageService.getMessages();
       } catch (e) {
         ErrorHandler.current.handle(error: e);
       }
