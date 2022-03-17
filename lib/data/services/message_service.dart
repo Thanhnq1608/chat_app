@@ -14,11 +14,13 @@ class MessageService extends GetxService implements MessageServiceType {
   }
 
   @override
-  Future<void> getMessages() async {
+  Future<List<Map<String, dynamic>>> getMessages() async{
+    List<Map<String, dynamic>> listMessages= [];
     await for (var snapshot in _firestore.collection('message').snapshots()) {
       for (var message in snapshot.docs) {
-        print(message.data()['text']);
+        listMessages.add(message.data());
       }
     }
+    return listMessages;
   }
 }

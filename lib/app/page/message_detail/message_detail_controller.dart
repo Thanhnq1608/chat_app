@@ -13,6 +13,9 @@ class MessageDetailController extends GetxController {
   late TextEditingController sendController;
   final _messageService = Get.find<MessageServiceType>();
   final _authService = Get.find<AuthServiceType>();
+
+  RxList<Map<String, dynamic>> listMessages= <Map<String, dynamic>>[].obs;
+
   userModel.User currentUser = userModel.User(userId: 'userId', email: 'email');
 
   Future<void> sendMessage() async {
@@ -20,7 +23,16 @@ class MessageDetailController extends GetxController {
       try {
         var result = await _messageService.sendMessage(
             message: sendController.text, email: currentUser.email);
-        await _messageService.getMessages();
+      } catch (e) {
+        ErrorHandler.current.handle(error: e);
+      }
+    }
+  }
+
+  Future<void> getMessage() async{
+    if (sendController.text.isNotEmpty) {
+      try {
+        listMessages.value = await _messageService.getMessages();
       } catch (e) {
         ErrorHandler.current.handle(error: e);
       }
@@ -46,5 +58,6 @@ class MessageDetailController extends GetxController {
     // TODO: implement onReady
     super.onReady();
     await getCurrentUser();
+    await getMessage();
   }
 }

@@ -12,15 +12,16 @@ class MessageDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xFF5157b2),
       appBar: _appBar(context),
-      body: Container(
-        child: Column(
-          children: [
-            _header(context),
-            SizedBox(
-              height: 20,
-            ),
-            _body(context),
-          ],
+      body: Obx( () =>  Container(
+          child: Column(
+            children: [
+              _header(context),
+              SizedBox(
+                height: 20,
+              ),
+              _body(context, controller.listMessages),
+            ],
+          ),
         ),
       ),
     );
@@ -94,12 +95,12 @@ class MessageDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _body(BuildContext context) {
+  Widget _body(BuildContext context, List<Map<String, dynamic>> messages) {
     return Expanded(
       child: Column(
         children: [
           Expanded(
-            child: ListMessage(),
+            child: ListMessage(messages: messages),
           ),
           TextInputMessage(
             controller: controller.sendController,
