@@ -53,6 +53,7 @@ class TextInputMessage extends StatelessWidget {
           IconButton(
             onPressed: onClickSend,
             icon: Icon(Icons.send),
+            hoverColor: Colors.red,
             color: Colors.blue[400],
           )
         ],

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:chat_app/data/models/message.dart';
 import 'package:chat_app/data/models/user.dart' as userModel;
 import 'package:chat_app/app/interfaces/auth_service_type.dart';
 import 'package:chat_app/app/interfaces/message_service_type.dart';
@@ -11,10 +14,13 @@ class MessageDetailController extends GetxController {
   MessageDetailController({required this.user});
   final User user;
   late TextEditingController sendController;
+  RxBool isLoading = false.obs;
   final _messageService = Get.find<MessageServiceType>();
   final _authService = Get.find<AuthServiceType>();
 
-  RxList<Map<String, dynamic>> listMessages= <Map<String, dynamic>>[].obs;
+  late StreamSubscription<List<Message>> streamSubcription;
+
+  RxList<Message> listMessages = <Message>[].obs;
 
   userModel.User currentUser = userModel.User(userId: 'userId', email: 'email');
 
@@ -23,20 +29,27 @@ class MessageDetailController extends GetxController {
       try {
         var result = await _messageService.sendMessage(
             message: sendController.text, email: currentUser.email);
+        sendController.clear();
       } catch (e) {
         ErrorHandler.current.handle(error: e);
       }
     }
   }
 
-  Future<void> getMessage() async{
-    if (sendController.text.isNotEmpty) {
-      try {
-        listMessages.value = await _messageService.getMessages();
-      } catch (e) {
-        ErrorHandler.current.handle(error: e);
-      }
+  Future<void> getMessages() async {
+    try {
+      isLoading(true);
+      listMessages.addAll(await _messageService.getListMessage());
+      isLoading(false);
+    } catch (e) {
+      ErrorHandler.current.handle(error: e);
     }
+  }
+
+  Stream<List<Message>> getLastMessage() {
+    var listMessages = _messageService.listenMessagesUpdate();
+    print(listMessages.length);
+    return listMessages;
   }
 
   Future<void> getCurrentUser() async {
@@ -50,6 +63,9 @@ class MessageDetailController extends GetxController {
   @override
   void onInit() {
     sendController = TextEditingController();
+    streamSubcription = getLastMessage().listen((event) {
+      listMessages.addAll(event);
+    });
     super.onInit();
   }
 
@@ -58,6 +74,12 @@ class MessageDetailController extends GetxController {
     // TODO: implement onReady
     super.onReady();
     await getCurrentUser();
-    await getMessage();
+    await getMessages();
+  }
+
+  @override
+  void onClose() {
+    streamSubcription.cancel();
+    super.onClose();
   }
 }

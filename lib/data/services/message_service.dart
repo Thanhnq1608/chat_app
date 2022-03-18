@@ -1,4 +1,5 @@
 import 'package:chat_app/app/interfaces/message_service_type.dart';
+import 'package:chat_app/data/models/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
@@ -14,13 +15,20 @@ class MessageService extends GetxService implements MessageServiceType {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getMessages() async{
-    List<Map<String, dynamic>> listMessages= [];
-    await for (var snapshot in _firestore.collection('message').snapshots()) {
-      for (var message in snapshot.docs) {
-        listMessages.add(message.data());
-      }
-    }
-    return listMessages;
+  Future<List<Message>> getListMessage() async {
+    final querySnapshot = await _firestore.collection('message').get();
+    return querySnapshot.docs.map((e) => Message.fromJson(e.data())).toList();
+  }
+
+  @override
+  Stream<List<Message>> listenMessagesUpdate() {
+    return _firestore.collection('message').snapshots().map((snapshot) {
+      List<Message> messages = [];
+      messages.addAll(snapshot.docChanges.reversed
+          .where((element) => element.doc.data() != null)
+          .map((e) => Message.fromJson(e.doc.data()!))
+          .toList());
+      return messages;
+    });
   }
 }

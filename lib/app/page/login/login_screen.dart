@@ -11,6 +11,8 @@ class LoginScreen extends GetView<LoginController> {
   void onclickEnter() {}
   @override
   Widget build(BuildContext context) {
+    controller.emailController.text = 'thanhnq1608@gmail.com';
+    controller.passwordContoller.text = 'Thanh567';
     return Scaffold(
       backgroundColor: Colors.black87,
       body: Container(

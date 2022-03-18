@@ -1,6 +1,7 @@
 import 'package:chat_app/app/page/message_detail/message_detail_controller.dart';
 import 'package:chat_app/app/page/message_detail/widgets/list_message.dart';
 import 'package:chat_app/app/page/message_detail/widgets/text_input_message.dart';
+import 'package:chat_app/data/models/message.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,16 +13,20 @@ class MessageDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xFF5157b2),
       appBar: _appBar(context),
-      body: Obx( () =>  Container(
-          child: Column(
-            children: [
-              _header(context),
-              SizedBox(
-                height: 20,
-              ),
-              _body(context, controller.listMessages),
-            ],
-          ),
+      body: Container(
+        child: Column(
+          children: [
+            _header(context),
+            SizedBox(
+              height: 20,
+            ),
+            Obx(
+              () => _body(
+                  context,
+                  controller.listMessages.value.reversed.toList(),
+                  controller.currentUser.email),
+            ),
+          ],
         ),
       ),
     );
@@ -95,12 +100,16 @@ class MessageDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _body(BuildContext context, List<Map<String, dynamic>> messages) {
+  Widget _body(
+      BuildContext context, List<Message> messages, String currentUser) {
     return Expanded(
       child: Column(
         children: [
           Expanded(
-            child: ListMessage(messages: messages),
+            child: ListMessage(
+              messages: messages,
+              currentUser: currentUser,
+            ),
           ),
           TextInputMessage(
             controller: controller.sendController,
