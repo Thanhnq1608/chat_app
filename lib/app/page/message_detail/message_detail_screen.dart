@@ -66,7 +66,7 @@ class MessageDetailScreen extends StatelessWidget {
             child: Container(
               width: context.width / 3,
               child: Text(
-                controller.user.name,
+                controller.currentUser.email,
                 style: Theme.of(context).textTheme.headline1!.copyWith(
                       color: Colors.white,
                       fontSize: 24,

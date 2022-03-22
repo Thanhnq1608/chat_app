@@ -9,7 +9,16 @@ class Message {
   @JsonKey(name: 'text')
   String message;
 
-  Message({required this.message, required this.sender});
+  @JsonKey(name: 'send_time')
+  String sendTime;
+
+  String receiver;
+
+  Message(
+      {required this.message,
+      required this.sender,
+      required this.receiver,
+      required this.sendTime});
 
   factory Message.fromJson(Map<String, dynamic> json) =>
       _$MessageFromJson(json);

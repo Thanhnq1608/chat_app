@@ -1,11 +1,11 @@
 import 'package:chat_app/app/routes/app_pages.dart';
 import 'package:chat_app/app/routes/app_routes.dart';
-import 'package:chat_app/core/models/message.dart' as messages;
+import 'package:chat_app/core/models/message.dart' as modelMess;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Message extends StatelessWidget {
-  final messageDatas = messages.Message.generateMessage();
+  final messageDatas = modelMess.Message.generateMessage();
 
   @override
   Widget build(BuildContext context) {
