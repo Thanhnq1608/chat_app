@@ -27,49 +27,51 @@ class SignUpScreen extends GetView<SignUpController> {
   Widget _body(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FormInput(
-            title: 'Email',
-            child: TextInput(
-              controller: controller.emailController,
-              obscureText: false,
+      child: Center(
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            FormInput(
+              title: 'Email',
+              child: TextInput(
+                controller: controller.emailController,
+                obscureText: false,
+              ),
             ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          FormInput(
-              child: TextInput(
-                controller: controller.passController,
-                obscureText: true,
-              ),
-              title: 'Password'),
-          SizedBox(
-            height: 20,
-          ),
-          FormInput(
-              child: TextInput(
-                controller: controller.rePassController,
-                obscureText: true,
-              ),
-              title: 'Password'),
-          SizedBox(
-            height: 30,
-          ),
-          ButtonLoginScreen(
-            title: 'Sign Up',
-            backgroundColor: Color(0xFF5157b2),
-            handleButton: () async {
-              final result = await controller.signUp();
-              if (result) {
-                Get.snackbar('', 'Sign up success');
-                Get.toNamed(AppRoutes.LOGIN);
-              }
-            },
-          ),
-        ],
+            SizedBox(
+              height: 20,
+            ),
+            FormInput(
+                child: TextInput(
+                  controller: controller.passController,
+                  obscureText: true,
+                ),
+                title: 'Password'),
+            SizedBox(
+              height: 20,
+            ),
+            FormInput(
+                child: TextInput(
+                  controller: controller.rePassController,
+                  obscureText: true,
+                ),
+                title: 'Password'),
+            SizedBox(
+              height: 30,
+            ),
+            ButtonLoginScreen(
+              title: 'Sign Up',
+              backgroundColor: Color(0xFF5157b2),
+              handleButton: () async {
+                final result = await controller.signUp();
+                if (result) {
+                  Get.snackbar('', 'Sign up success');
+                  Get.toNamed(AppRoutes.LOGIN);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

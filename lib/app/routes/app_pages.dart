@@ -4,7 +4,6 @@ import 'package:chat_app/app/page/forget_pass/forget_password_binding.dart';
 import 'package:chat_app/app/page/forget_pass/forget_password_screen.dart';
 import 'package:chat_app/app/page/home/home_binding.dart';
 import 'package:chat_app/app/page/home/home_screen.dart';
-import 'package:chat_app/app/page/home/widgets/message.dart';
 import 'package:chat_app/app/page/login/login_binding.dart';
 import 'package:chat_app/app/page/login/login_screen.dart';
 import 'package:chat_app/app/page/message_detail/message_detail_screen.dart';
