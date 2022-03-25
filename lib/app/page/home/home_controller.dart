@@ -1,15 +1,21 @@
 import 'package:chat_app/app/interfaces/auth_service_type.dart';
 import 'package:chat_app/app/routes/app_routes.dart';
-import 'package:chat_app/core/models/user.dart';
+import 'package:chat_app/data/models/user.dart';
 import 'package:chat_app/tools/helper/error_handler.dart';
 import 'package:chat_app/tools/session_manager/session_manager.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
   final _sessionManager = Get.find<SessionManager>();
   final _authService = Get.find<AuthServiceType>();
-  late final TextEditingController searchController;
+  final TextEditingController searchController = TextEditingController();
+
+  RxBool isLoading = false.obs;
+  // late StreamSubscription<List<User>> streamSubscription;
+
+  RxList<User> users = RxList<User>();
 
   Future<void> logout() async {
     try {
@@ -24,7 +30,6 @@ class HomeController extends GetxController {
   Future<void> loadProfile() async {
     try {
       final userProfile = await _authService.getCurrentUser();
-      // user(userProfile);
       _sessionManager.updateProfile(userProfile);
     } catch (e) {
       ErrorHandler.current.handle(error: e);
@@ -32,8 +37,7 @@ class HomeController extends GetxController {
   }
 
   @override
-  void onInit() {
-    searchController = TextEditingController();
+  void onInit() async {
     super.onInit();
   }
 
@@ -42,5 +46,22 @@ class HomeController extends GetxController {
     // TODO: implement onReady
     super.onReady();
     await loadProfile();
+    searchController.addListener(() async {
+      if (searchController.text != "" || searchController.text.isNotEmpty) {
+        isLoading(true);
+        users.value =
+            await _authService.getUserByEmail(email: searchController.text);
+        isLoading(false);
+        print(users.value.length);
+      } else {
+        users.value.clear();
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    searchController.dispose();
+    super.onClose();
   }
 }

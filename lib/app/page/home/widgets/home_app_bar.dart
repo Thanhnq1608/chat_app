@@ -5,8 +5,11 @@ import 'package:get/get.dart';
 class HomeAppBar extends StatelessWidget {
   final Function() logout;
   final TextEditingController searchController;
-  HomeAppBar({Key? key, required this.logout, required this.searchController})
-      : super(key: key);
+  HomeAppBar({
+    Key? key,
+    required this.logout,
+    required this.searchController,
+  }) : super(key: key);
 
   final double maxHeight = 80;
   final double minHeight = 200;
@@ -122,7 +125,9 @@ class HomeAppBar extends StatelessWidget {
           SizedBox(
             height: 25,
           ),
-          RecentContacts(searchController: searchController),
+          RecentContacts(
+            searchController: searchController,
+          ),
         ],
       ),
     );

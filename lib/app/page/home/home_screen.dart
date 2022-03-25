@@ -1,7 +1,7 @@
+import 'package:chat_app/app/components/loading_indicator.dart';
 import 'package:chat_app/app/page/home/home_controller.dart';
 import 'package:chat_app/app/page/home/widgets/home_app_bar.dart';
-import 'package:chat_app/app/page/home/widgets/message.dart';
-import 'package:chat_app/app/page/home/widgets/recent_contacts.dart';
+import 'package:chat_app/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -32,7 +32,25 @@ class HomeScreen extends GetView<HomeController> {
               topRight: Radius.circular(50),
             ),
           ),
-          // child: Message(),
+          child: Obx(
+            () => controller.isLoading.value
+                ? Center(child: LoadingIndicator())
+                : ListView.builder(
+                    itemCount: controller.users.value.length,
+                    itemBuilder: (context, index) {
+                      var user = controller.users.value[index];
+                      return InkWell(
+                        onTap: () {
+                          Get.toNamed(AppRoutes.MESSAGE, arguments: user);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: Text(user.email),
+                        ),
+                      );
+                    },
+                  ),
+          ),
         ),
       ),
     );

@@ -1,13 +1,13 @@
 import 'package:chat_app/app/page/home/widgets/search_bar_widget.dart';
 import 'package:chat_app/app/routes/app_routes.dart';
-import 'package:chat_app/core/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RecentContacts extends StatelessWidget {
   final TextEditingController searchController;
-  RecentContacts({required this.searchController});
-  final contacts = User.generateUsers();
+  RecentContacts({
+    required this.searchController,
+  });
   RxBool isClickToSearch = false.obs;
 
   @override
@@ -52,36 +52,37 @@ class RecentContacts extends StatelessWidget {
                         onClickToIcon: () {},
                       ),
                     )
-                  : ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        var color = contacts[index].userColor;
-                        return Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Get.toNamed(AppRoutes.MESSAGE,
-                                    arguments: contacts[index]);
-                              },
-                              child: Container(
-                                height: 50,
-                                width: 50,
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    color: color, shape: BoxShape.circle),
-                                child: CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage(contacts[index].avatar),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 15.0,
-                            ),
-                          ],
-                        );
-                      },
-                      itemCount: contacts.length),
+                  : Container(),
+              // ListView.builder(
+              //     scrollDirection: Axis.horizontal,
+              //     itemBuilder: (context, index) {
+              //       var color = contacts[index].userColor;
+              //       return Row(
+              //         children: [
+              //           InkWell(
+              //             onTap: () {
+              //               Get.toNamed(AppRoutes.MESSAGE,
+              //                   arguments: contacts[index]);
+              //             },
+              //             child: Container(
+              //               height: 50,
+              //               width: 50,
+              //               padding: EdgeInsets.all(10),
+              //               decoration: BoxDecoration(
+              //                   color: color, shape: BoxShape.circle),
+              //               child: CircleAvatar(
+              //                 backgroundImage:
+              //                     AssetImage(contacts[index].avatar),
+              //               ),
+              //             ),
+              //           ),
+              //           SizedBox(
+              //             width: 15.0,
+              //           ),
+              //         ],
+              //       );
+              //     },
+              //     itemCount: contacts.length),
             ),
           )
         ],
