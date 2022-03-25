@@ -21,9 +21,7 @@ class MessageDetailScreen extends StatelessWidget {
               height: 20,
             ),
             Obx(
-              () => _body(
-                  context,
-                  controller.listMessages.value.reversed.toList(),
+              () => _body(context, controller.listMessages.value,
                   controller.currentUser.email),
             ),
           ],
@@ -66,7 +64,7 @@ class MessageDetailScreen extends StatelessWidget {
             child: Container(
               width: context.width / 3,
               child: Text(
-                controller.currentUser.email,
+                controller.user.email,
                 style: Theme.of(context).textTheme.headline1!.copyWith(
                       color: Colors.white,
                       fontSize: 24,

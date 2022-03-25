@@ -2,28 +2,29 @@ import 'dart:async';
 import 'package:chat_app/data/models/message.dart';
 import 'package:chat_app/app/interfaces/auth_service_type.dart';
 import 'package:chat_app/app/interfaces/message_service_type.dart';
-import 'package:chat_app/data/core/auth.dart';
 import 'package:chat_app/data/models/user.dart';
-import 'package:chat_app/core/models/user.dart' as local;
 import 'package:chat_app/tools/helper/error_handler.dart';
 import 'package:chat_app/tools/session_manager/session_manager.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class MessageDetailController extends GetxController {
   MessageDetailController({required this.user});
-  final local.User user;
+  final User user;
   late TextEditingController sendController;
-  DateTime now = DateTime.now();
   RxBool isLoading = false.obs;
   final _messageService = Get.find<MessageServiceType>();
   final _authService = Get.find<AuthServiceType>();
   final _sessionManager = Get.find<SessionManager>();
 
-  late StreamSubscription<List<Message>> streamSubcription;
+  late StreamSubscription<List<Message>> streamSubcriptionSender;
+  late StreamSubscription<List<Message>> streamSubcriptionReceiver;
 
   RxList<Message> listMessages = <Message>[].obs;
+
+  RxList<Message> listMessagesUI = <Message>[].obs;
 
   User currentUser = User(userId: 'userId', email: 'email');
 
@@ -34,29 +35,33 @@ class MessageDetailController extends GetxController {
           message: Message(
             message: sendController.text,
             sender: currentUser.email,
-            receiver: 'receiver',
-            sendTime: DateFormat('yyyy/MM/dd \- kk:mm:ss').format(now),
+            receiver: user.email,
+            sendTime:
+                DateFormat('yyyy/MM/dd \- kk:mm:ss').format(DateTime.now()) +
+                    ':${DateTime.now().millisecondsSinceEpoch}',
           ),
         );
         sendController.clear();
+        print(DateFormat('yyyy/MM/dd \- kk:mm:ss').format(DateTime.now()) +
+            ':${DateTime.now().millisecondsSinceEpoch}');
       } catch (e) {
         ErrorHandler.current.handle(error: e);
       }
     }
   }
 
-  // Future<void> getMessages() async {
-  //   try {
-  //     isLoading(true);
-  //     listMessages.addAll(await _messageService.getListMessage());
-  //     isLoading(false);
-  //   } catch (e) {
-  //     ErrorHandler.current.handle(error: e);
-  //   }
-  // }
+  Stream<List<Message>> getLastMessageSender(
+      {required String sender, required String receiver}) {
+    var listMessages = _messageService.listenMessagesFromSender(
+        sender: sender, receiver: receiver);
+    print(listMessages.length);
+    return listMessages;
+  }
 
-  Stream<List<Message>> getLastMessage() {
-    var listMessages = _messageService.listenMessagesUpdate();
+  Stream<List<Message>> getLastMessageReceiver(
+      {required String sender, required String receiver}) {
+    var listMessages = _messageService.listenMessagesFromReceiver(
+        sender: sender, receiver: receiver);
     print(listMessages.length);
     return listMessages;
   }
@@ -70,10 +75,23 @@ class MessageDetailController extends GetxController {
   }
 
   @override
-  void onInit() {
+  void onInit() async {
     sendController = TextEditingController();
-    streamSubcription = getLastMessage().listen((event) {
+    await getCurrentUser();
+
+    streamSubcriptionSender =
+        getLastMessageSender(receiver: user.email, sender: currentUser.email)
+            .listen((event) {
       listMessages.addAll(event);
+
+      listMessages.sort((a, b) => b.sendTime.compareTo(a.sendTime));
+    });
+    streamSubcriptionReceiver =
+        getLastMessageReceiver(sender: user.email, receiver: currentUser.email)
+            .listen((event) {
+      listMessages.addAll(event);
+
+      listMessages.sort((a, b) => b.sendTime.compareTo(a.sendTime));
     });
     super.onInit();
   }
@@ -82,12 +100,12 @@ class MessageDetailController extends GetxController {
   void onReady() async {
     // TODO: implement onReady
     super.onReady();
-    await getCurrentUser();
   }
 
   @override
   void onClose() {
-    streamSubcription.cancel();
+    streamSubcriptionSender.cancel();
+    streamSubcriptionReceiver.cancel();
     super.onClose();
   }
 }

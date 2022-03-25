@@ -24,16 +24,16 @@ class TextInputMessage extends StatelessWidget {
               cursorHeight: 20,
               textAlignVertical: TextAlignVertical.bottom,
               style: Theme.of(context).textTheme.headline1!.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
                   color: Colors.black),
               cursorRadius: Radius.circular(100.0),
               decoration: InputDecoration(
                   hintText: 'Aa',
                   hintStyle: Theme.of(context).textTheme.headline1!.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.black),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black54),
                   filled: true,
                   fillColor: Colors.black12,
                   border: OutlineInputBorder(
