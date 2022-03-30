@@ -19,7 +19,6 @@ class HomeController extends GetxController {
 
   Future<void> logout() async {
     try {
-      await _sessionManager.logout();
       await _authService.signOut();
       Get.offAllNamed(AppRoutes.LOGIN);
     } catch (e) {
@@ -30,7 +29,10 @@ class HomeController extends GetxController {
   Future<void> loadProfile() async {
     try {
       final userProfile = await _authService.getCurrentUser();
+      print(userProfile.email);
       _sessionManager.updateProfile(userProfile);
+      _authService.updateTokenUser(email: userProfile.email);
+      print(userProfile.email);
     } catch (e) {
       ErrorHandler.current.handle(error: e);
     }

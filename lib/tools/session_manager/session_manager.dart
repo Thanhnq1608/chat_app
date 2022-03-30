@@ -30,6 +30,15 @@ class SessionManager extends GetxService {
     await sfStorage.setUserProfile(user);
   }
 
+  Future<String?> currentTokenFirebase() async {
+    final token = await sfStorage.getTokenFirebase();
+    return token;
+  }
+
+  Future<void> updateTokenFirebase(String token) async {
+    await sfStorage.setTokenFirebase(token);
+  }
+
   Future<void> logout() async {
     await sfStorage.setUserProfile(null);
   }

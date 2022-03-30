@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:chat_app/app/interfaces/auth_service_type.dart';
 import 'package:chat_app/data/models/user.dart' as userModel;
 import 'package:chat_app/tools/helper/error_handler.dart';
+import 'package:chat_app/tools/session_manager/session_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -10,49 +11,62 @@ import 'package:get/get.dart';
 class AuthService extends GetxService implements AuthServiceType {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
+  final _sessionManager = Get.find<SessionManager>();
 
   Rx<bool> isVerifyEmail = false.obs;
   Timer? timer;
 
-  userModel.User? _userFromFirebaseUser(User? user) {
+  userModel.User? _userFromFirebaseUser({userModel.User? user}) {
     return user != null
-        ? userModel.User(userId: user.uid, email: user.email!)
+        ? userModel.User(
+            userId: user.userId,
+            email: user.email,
+            name: user.name,
+            token: user.token)
         : null;
   }
 
   @override
   Future<userModel.User> getCurrentUser() async {
-    try {
-      final user = await _auth.currentUser;
-      return _userFromFirebaseUser(user)!;
-    } catch (e) {
-      print(e);
-      rethrow;
-    }
+    final userLocal = await _auth.currentUser;
+    final docUser =
+        await _firestore.collection('users').doc(userLocal!.email).get();
+    final user = docUser.data();
+    return _userFromFirebaseUser(user: userModel.User.fromJson(user!))!;
   }
 
   @override
   Future signInWithEmailAndPassword(
       {required String email, required String password}) async {
+    final token = await _sessionManager.currentTokenFirebase();
     UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
-    User? user = result.user;
+    User? userCredential = result.user;
+    final docUser =
+        await _firestore.collection('users').doc(userCredential!.email).get();
+    final user = docUser.data();
 
     print('Result: $result');
-    return _userFromFirebaseUser(user);
+    return _userFromFirebaseUser(
+      user: userModel.User.fromJson(user!),
+    );
   }
 
   @override
-  Future<userModel.User> signUpWithEmailAndPassword(
-      {required String email, required String password}) async {
+  Future<userModel.User> signUpWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
     UserCredential result = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
+
     User? user = result.user;
 
     print('Result: $result');
-    return _userFromFirebaseUser(user)!;
+    return userModel.User(
+        email: user!.email!, userId: user.uid, name: '', token: '');
   }
 
   @override
@@ -63,6 +77,10 @@ class AuthService extends GetxService implements AuthServiceType {
 
   @override
   Future signOut() async {
+    final user = await _sessionManager.currentUser();
+    print(user.email);
+    _firestore.collection('users').doc(user.email).update({'token': ''});
+    _sessionManager.logout();
     timer?.cancel();
     return await _auth.signOut();
   }
@@ -99,19 +117,34 @@ class AuthService extends GetxService implements AuthServiceType {
 
   @override
   Future<void> createUser({required userModel.User user}) async {
-    var addUser = userModel.User(email: user.email, userId: user.userId);
+    var addUser = userModel.User(
+        email: user.email,
+        userId: user.userId,
+        name: user.name,
+        token: user.token);
     Map<String, dynamic> userMap = user.toJson();
 
     //save user to firebase
-    await _firestore.collection('users').add(userMap);
+    await _firestore.collection('users').doc(addUser.email).set(userMap);
   }
 
   @override
   Future<List<userModel.User>> getUserByEmail({required String email}) async {
     final temp = await _firestore
         .collection('users')
-        .where('email', isEqualTo: email)
+        .where('name', isGreaterThan: email)
         .get();
     return temp.docs.map((e) => userModel.User.fromJson(e.data())).toList();
+  }
+
+  @override
+  Future<void> updateTokenUser({required String email}) async {
+    var token = await _sessionManager.currentTokenFirebase();
+    print(token);
+    final result = await _firestore
+        .collection('users')
+        .doc(email)
+        .update({'token': token});
+    // result.
   }
 }

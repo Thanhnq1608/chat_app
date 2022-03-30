@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chat_app/data/api/shared_preferences/models/sf_token_firebase.dart';
 import 'package:chat_app/data/api/shared_preferences/models/sf_user.dart';
 import 'package:chat_app/data/models/user.dart';
 import 'package:get/get.dart';
@@ -21,7 +22,8 @@ class SfStorage extends GetxService {
       return;
     }
 
-    final sfUser = SfUser(userId: user.userId, email: user.email);
+    final sfUser =
+        SfUser(userId: user.userId, email: user.email, name: user.name);
 
     await _spf.setString(
       _getRawKey(SfKeys.userProfile),
@@ -31,16 +33,53 @@ class SfStorage extends GetxService {
     );
   }
 
+  Future<void> setTokenFirebase(String? token) async {
+    if (token == null || token.isEmpty) {
+      await _spf.remove(_getRawKey(SfKeys.tokenFirebase));
+      return;
+    }
+    final sfTokenFirebase = SfTokenFirebase(token: token);
+    await _spf.setString(
+      _getRawKey(SfKeys.tokenFirebase),
+      json.encode(
+        sfTokenFirebase.toJson(),
+      ),
+    );
+  }
+
+  Future<String?> getTokenFirebase() async {
+    String? sfTokenFirebase = _spf.getString(_getRawKey(SfKeys.tokenFirebase));
+
+    if (sfTokenFirebase == null || sfTokenFirebase.isEmpty) {
+      return null;
+    }
+
+    SfTokenFirebase sfToken =
+        SfTokenFirebase.fromJson(json.decode(sfTokenFirebase));
+
+    return sfToken.token;
+  }
+
   Future<User?> getCurrentUser() async {
     String? sfAccountStr = _spf.getString(_getRawKey(SfKeys.userProfile));
+    String? sfToken = _spf.getString(_getRawKey(SfKeys.tokenFirebase));
 
-    if (sfAccountStr == null || sfAccountStr.isEmpty) {
+    if (sfAccountStr == null ||
+        sfAccountStr.isEmpty ||
+        sfToken == null ||
+        sfToken.isEmpty) {
       return null;
     }
 
     SfUser sfUser = SfUser.fromJson(json.decode(sfAccountStr));
+    SfTokenFirebase sfTokenFirebase =
+        SfTokenFirebase.fromJson(json.decode(sfToken));
 
-    final currentUser = User(userId: sfUser.userId, email: sfUser.email);
+    final currentUser = User(
+        userId: sfUser.userId,
+        email: sfUser.email,
+        name: sfUser.name,
+        token: sfTokenFirebase.token);
 
     return currentUser;
   }

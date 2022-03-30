@@ -1,4 +1,5 @@
 import 'package:chat_app/app/components/form_input.dart';
+import 'package:chat_app/app/components/loading_indicator.dart';
 import 'package:chat_app/app/components/text_input.dart';
 import 'package:chat_app/app/page/create_account/sign_up_controller.dart';
 import 'package:chat_app/app/components/buntton_login_screen.dart';
@@ -17,7 +18,7 @@ class SignUpScreen extends GetView<SignUpController> {
       body: Obx(
         () => controller.isLoading.value
             ? Center(
-                child: CircularProgressIndicator(),
+                child: LoadingIndicator(),
               )
             : _body(context),
       ),
@@ -31,6 +32,16 @@ class SignUpScreen extends GetView<SignUpController> {
         child: ListView(
           shrinkWrap: true,
           children: [
+            FormInput(
+              title: 'Name',
+              child: TextInput(
+                controller: controller.nameController,
+                obscureText: false,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
             FormInput(
               title: 'Email',
               child: TextInput(

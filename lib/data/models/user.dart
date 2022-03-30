@@ -9,7 +9,15 @@ class User {
 
   String email;
 
-  User({required this.userId, required this.email});
+  String name;
+
+  String token;
+
+  User(
+      {required this.userId,
+      required this.email,
+      required this.name,
+      required this.token});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   Map<String, dynamic> toJson() => _$UserToJson(this);
