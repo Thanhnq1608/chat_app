@@ -1,9 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
+import 'package:chat_app/app/interfaces/auth_service_type.dart';
 import 'package:chat_app/app/routes/app_routes.dart';
 import 'package:chat_app/data/api/shared_preferences/shared_preferences.dart';
+import 'package:chat_app/data/models/notification_data.dart';
+import 'package:chat_app/data/models/notification.dart' as localNoti;
 import 'package:chat_app/data/models/user.dart';
+import 'package:chat_app/data/services/auth_service.dart';
+import 'package:chat_app/tools/helper/show_local_push_notification.dart';
 import 'package:chat_app/tools/session_manager/session_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -28,11 +35,18 @@ class PushNotification extends GetxService {
     importance: Importance.max,
   );
 
-  void _handleClickNotify() {
+  Future<void> _handleClickNotify({required String email}) async {
     final sessionManager = Get.find<SessionManager>();
+
+    final _authService = Get.find<AuthServiceType>();
+    var userDoc = await _firestore.collection('users').doc(email).get();
+    if (userDoc.data() == null) {
+      return;
+    }
+    var user = User.fromJson(userDoc.data()!);
     sessionManager.isLogin().then((isLogin) {
       if (isLogin) {
-        // Get.toNamed(AppRoutes.NOTIFICATION_LIST);
+        Get.toNamed(AppRoutes.MESSAGE, arguments: user);
       }
     });
   }
@@ -41,9 +55,31 @@ class PushNotification extends GetxService {
     messaging = FirebaseMessaging.instance;
     await _initFlutterNotificationsPlugin();
     // await _requestiOSPermissionIfNeed();
-    FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      _handleClickNotify();
+    FirebaseMessaging.onMessageOpenedApp.listen((event) async {
+      print('You clicked to notìication onMessageOpenedApp');
+      // Get.toNamed(AppRoutes.MESSAGE,
+      //     arguments: await _sfStorage.getCurrentUser());
+
+      var data = localNoti.Notification.fromJson(event.data);
+
+      await _handleClickNotify(email: data.data.sender);
     });
+
+    await messaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
 
     final user = await _sfStorage.getCurrentUser();
 
@@ -61,55 +97,19 @@ class PushNotification extends GetxService {
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       print('Got a message whilst in the foreground!');
       print('Message data: ${message.data}');
-
-      //Reload Notification Badge
-      final _sessionManager = Get.find<SessionManager>();
-      _sessionManager.isLogin().then((isLogin) {
-        _showLocalPushNotification(message);
-      });
+      await ShowLocalPushNotification(
+              flutterLocalNotificationsPlugin: flutterLocalNotificationsPlugin)
+          .showLocalPushNotification(message);
     });
-  }
-
-  Future<void> _showLocalPushNotification(RemoteMessage message) async {
-    RemoteNotification? notification = message.notification;
-    if (notification == null) {
-      return;
-    }
-
-    //Show local notification for android
-    if (Platform.isAndroid) {
-      final androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        channel.id,
-        channel.name,
-        color: Colors.black,
-        playSound: true,
-        icon: '@drawable/launch_background',
-      );
-
-      var platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics);
-
-      flutterLocalNotificationsPlugin.show(notification.hashCode,
-          notification.title, notification.body, platformChannelSpecifics,
-          payload: message.data.toString());
-    }
-    //Show local notification for iOS
-    if (Platform.isIOS) {
-      flutterLocalNotificationsPlugin.show(
-          notification.hashCode, notification.title, notification.body, null,
-          payload: message.data.toString());
-    }
   }
 
   Future<void> _initFlutterNotificationsPlugin() async {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@drawable/launch_background');
+        AndroidInitializationSettings('@drawable/ic_ta_chat_app');
     final IOSInitializationSettings initializationSettingsIOS =
         IOSInitializationSettings(
       requestSoundPermission: true,
@@ -122,16 +122,12 @@ class PushNotification extends GetxService {
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: (String? payload) {
-      _handleClickNotify();
-    });
-  }
-
-  Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
-    // If you're going to use other Firebase services in the background, such as Firestore,
-    // make sure you call `initializeApp` before using other Firebase services.
-    print("Handling a background message: ${message.messageId}");
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onSelectNotification: (String? payload) async {
+        await _handleClickNotify(email: payload!);
+        print(payload);
+      },
+    );
   }
 }

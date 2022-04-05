@@ -2,8 +2,11 @@ import 'dart:async';
 import 'package:chat_app/data/models/message.dart';
 import 'package:chat_app/app/interfaces/auth_service_type.dart';
 import 'package:chat_app/app/interfaces/message_service_type.dart';
+import 'package:chat_app/data/models/notification.dart' as localNoti;
+import 'package:chat_app/data/models/notification_data.dart';
 import 'package:chat_app/data/models/user.dart';
 import 'package:chat_app/tools/helper/error_handler.dart';
+import 'package:chat_app/tools/push_notification/push_notification.dart';
 import 'package:chat_app/tools/session_manager/session_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,6 +21,7 @@ class MessageDetailController extends GetxController {
   final _messageService = Get.find<MessageServiceType>();
   final _authService = Get.find<AuthServiceType>();
   final _sessionManager = Get.find<SessionManager>();
+  final _pushNotification = Get.find<PushNotification>();
 
   late StreamSubscription<List<Message>> streamSubcriptionSender;
   late StreamSubscription<List<Message>> streamSubcriptionReceiver;
@@ -41,8 +45,22 @@ class MessageDetailController extends GetxController {
                 DateFormat('yyyy/MM/dd \- kk:mm:ss').format(DateTime.now()),
           ),
         );
+        await _authService.sendNotificationMessage(
+          notification: localNoti.Notification(
+            data: NotificationData(
+              message: sendController.text,
+              sender: currentUser.email,
+              title: currentUser.name,
+              clickAction: "FLUTTER_NOTIFICATION_CLICK",
+            ),
+            priority: 'high',
+            receiver: user.token,
+          ),
+        );
+
         sendController.clear();
       } catch (e) {
+        print(e);
         ErrorHandler.current.handle(error: e);
       }
     }

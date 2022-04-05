@@ -1,17 +1,23 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:chat_app/app/interfaces/auth_service_type.dart';
+import 'package:chat_app/data/models/notification.dart';
 import 'package:chat_app/data/models/user.dart' as userModel;
 import 'package:chat_app/tools/helper/error_handler.dart';
 import 'package:chat_app/tools/session_manager/session_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class AuthService extends GetxService implements AuthServiceType {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
   final _sessionManager = Get.find<SessionManager>();
+  final client = http.Client();
 
   Rx<bool> isVerifyEmail = false.obs;
   Timer? timer;
@@ -146,5 +152,22 @@ class AuthService extends GetxService implements AuthServiceType {
         .doc(email)
         .update({'token': token});
     // result.
+  }
+
+  @override
+  Future<void> sendNotificationMessage(
+      {required Notification notification}) async {
+    // await http.request('https://fcm.googleapis.com/fcm/send',
+    //     options: Options(method: 'POST'),
+    //     queryParameters: notification.toJson());
+    var url = Uri.parse('https://fcm.googleapis.com/fcm/send');
+    var headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization':
+          'key=AAAAGOhsJ1E:APA91bFhu_58YHhEAkfAI8nGqZLm_uq-CqUxTxSp9GyH0Fx5vle08z2hQWIOvcKMFNhuYE_xbSyDeHhErYlxGuO5hSlfUYpsp48Hxb4xvTiicTduiFtbR_zUrAQ1hkmiWIpmhp6ipHSN',
+    };
+    var response = await client.post(url,
+        headers: headers, body: json.encode(notification.toJson()));
+    print('${response.statusCode}: ${response.body}');
   }
 }
