@@ -161,7 +161,9 @@ class HomeScreen extends GetView<HomeController> {
                   onTap: () async {
                     var user =
                         await controller.getUser(email: recentContact.email);
-                    Get.toNamed(AppRoutes.MESSAGE, arguments: user);
+                    var result =
+                        await Get.toNamed(AppRoutes.MESSAGE, arguments: user);
+                    await controller.seenMessage(contact: result);
                   },
                   child: Container(
                     child: Column(
@@ -169,11 +171,15 @@ class HomeScreen extends GetView<HomeController> {
                       children: [
                         Text(
                           recentContact.name,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline5!
-                              .copyWith(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
+                          style:
+                              Theme.of(context).textTheme.headline5!.copyWith(
+                                    color: Colors.black,
+                                    fontWeight: recentContact.isSeen
+                                        ? FontWeight.w300
+                                        : FontWeight.bold,
+                                    letterSpacing: 1,
+                                    fontSize: 18,
+                                  ),
                         ),
                         SizedBox(
                           height: 8.0,
@@ -182,9 +188,10 @@ class HomeScreen extends GetView<HomeController> {
                           recentContact.lastMessage,
                           style:
                               Theme.of(context).textTheme.bodyText1!.copyWith(
-                                    fontSize: 16,
+                                    fontSize: 15,
+                                    color: Colors.black,
                                     fontWeight: recentContact.isSeen
-                                        ? FontWeight.normal
+                                        ? FontWeight.w300
                                         : FontWeight.bold,
                                   ),
                         )

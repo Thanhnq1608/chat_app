@@ -43,6 +43,13 @@ class RecentContactService extends GetxService
             CollectionNameFirestore.getName(type: CollectionType.sub_recent))
         .doc(emailDoc)
         .set(contact.toJson());
+    RecentContact contactOfSender = RecentContact(
+      isSeen: contact.isSeen,
+      lastMessage: contact.lastMessage,
+      sendTime: contact.sendTime,
+      email: user.email,
+      name: user.name,
+    );
     await _firestore
         .collection(CollectionNameFirestore.getName(
             type: CollectionType.recent_contact))
@@ -50,6 +57,20 @@ class RecentContactService extends GetxService
         .collection(
             CollectionNameFirestore.getName(type: CollectionType.sub_recent))
         .doc(user.email)
-        .set(contact.toJson());
+        .set(contactOfSender.toJson());
+  }
+
+  @override
+  Future<void> seenMessage({required RecentContact contact}) async {
+    final user = await _sessionManager.currentUser();
+    Map<String, bool> mapIsSeen = {'is_seen': true};
+    await _firestore
+        .collection(CollectionNameFirestore.getName(
+            type: CollectionType.recent_contact))
+        .doc(user.email)
+        .collection(
+            CollectionNameFirestore.getName(type: CollectionType.sub_recent))
+        .doc(contact.email)
+        .update(mapIsSeen);
   }
 }

@@ -36,6 +36,14 @@ class HomeController extends GetxController {
     }
   }
 
+  Future<void> seenMessage({required RecentContact contact}) async {
+    try {
+      await _recentContactService.seenMessage(contact: contact);
+    } catch (e) {
+      ErrorHandler.current.handle(error: e);
+    }
+  }
+
   Future<void> loadProfile() async {
     try {
       final userProfile = await _authService.getCurrentUser();

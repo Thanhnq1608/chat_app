@@ -2,6 +2,7 @@ import 'package:chat_app/app/page/message_detail/message_detail_controller.dart'
 import 'package:chat_app/app/page/message_detail/widgets/list_message.dart';
 import 'package:chat_app/app/page/message_detail/widgets/text_input_message.dart';
 import 'package:chat_app/data/models/message.dart';
+import 'package:chat_app/data/models/recent_contact.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -36,7 +37,13 @@ class MessageDetailScreen extends StatelessWidget {
       elevation: 0,
       leading: TextButton(
         onPressed: () {
-          Get.back();
+          Get.back(
+              result: RecentContact(
+                  isSeen: true,
+                  lastMessage: 'lastMessage',
+                  sendTime: 'sendTime',
+                  email: controller.user.email,
+                  name: 'name'));
         },
         child: Text(
           'Back',

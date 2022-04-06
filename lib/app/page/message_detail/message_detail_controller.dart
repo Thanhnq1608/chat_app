@@ -62,7 +62,7 @@ class MessageDetailController extends GetxController {
         );
         _recentContactService.updateRecentContact(
             contact: RecentContact(
-                isSeen: true,
+                isSeen: false,
                 lastMessage: sendController.text,
                 email: user.email,
                 sendTime:

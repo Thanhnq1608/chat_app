@@ -4,4 +4,5 @@ abstract class RecentContactServiceType {
   Future<Stream<List<RecentContact>>> recentContact();
   Future<void> updateRecentContact(
       {required RecentContact contact, required String emailDoc});
+  Future<void> seenMessage({required RecentContact contact});
 }

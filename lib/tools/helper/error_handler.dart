@@ -9,7 +9,7 @@ class ErrorHandler {
     // if (error is AppError && error.type == ErrorType.unAuthorized) {
     //   return;
     // }
-
+    print(error);
     Get.dialog(ErrorAlertDialog(error: error.toString()));
   }
 }
