@@ -23,10 +23,9 @@ class RecentContactService extends GetxService
         .snapshots()
         .map((event) {
       List<RecentContact> contacts = [];
-      contacts.addAll(event.docChanges
+      contacts.addAll(event.docs
           .toList()
-          .where((element) => element.doc.data() != null)
-          .map((e) => RecentContact.fromJson(e.doc.data()!))
+          .map((e) => RecentContact.fromJson(e.data()))
           .toList());
       return contacts;
     });

@@ -73,7 +73,7 @@ class HomeController extends GetxController {
     streamSubscription = recent.listen((event) {
       recentContacts.value = event;
 
-      recentContacts.sort((a, b) => a.sendTime.compareTo(b.sendTime));
+      recentContacts.sort((a, b) => b.sendTime.compareTo(a.sendTime));
     });
     super.onInit();
   }
