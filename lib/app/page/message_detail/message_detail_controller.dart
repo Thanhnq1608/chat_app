@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:chat_app/app/interfaces/recent_contact_service_type.dart';
 import 'package:chat_app/data/models/message.dart';
 import 'package:chat_app/app/interfaces/auth_service_type.dart';
 import 'package:chat_app/app/interfaces/message_service_type.dart';
 import 'package:chat_app/data/models/notification.dart' as localNoti;
 import 'package:chat_app/data/models/notification_data.dart';
+import 'package:chat_app/data/models/recent_contact.dart';
 import 'package:chat_app/data/models/user.dart';
 import 'package:chat_app/tools/helper/error_handler.dart';
 import 'package:chat_app/tools/push_notification/push_notification.dart';
@@ -20,6 +22,7 @@ class MessageDetailController extends GetxController {
   RxBool isLoading = false.obs;
   final _messageService = Get.find<MessageServiceType>();
   final _authService = Get.find<AuthServiceType>();
+  final _recentContactService = Get.find<RecentContactServiceType>();
   final _sessionManager = Get.find<SessionManager>();
   final _pushNotification = Get.find<PushNotification>();
 
@@ -36,7 +39,7 @@ class MessageDetailController extends GetxController {
   Future<void> sendMessage() async {
     if (sendController.text.isNotEmpty) {
       try {
-        var result = await _messageService.sendMessage(
+        _messageService.sendMessage(
           message: Message(
             message: sendController.text,
             sender: currentUser.email,
@@ -45,7 +48,7 @@ class MessageDetailController extends GetxController {
                 DateFormat('yyyy/MM/dd \- kk:mm:ss').format(DateTime.now()),
           ),
         );
-        await _authService.sendNotificationMessage(
+        _authService.sendNotificationMessage(
           notification: localNoti.Notification(
             data: NotificationData(
               message: sendController.text,
@@ -57,7 +60,15 @@ class MessageDetailController extends GetxController {
             receiver: user.token,
           ),
         );
-
+        _recentContactService.updateRecentContact(
+            contact: RecentContact(
+                isSeen: true,
+                lastMessage: sendController.text,
+                email: user.email,
+                sendTime:
+                    DateFormat('yyyy/MM/dd \- kk:mm:ss').format(DateTime.now()),
+                name: user.name),
+            emailDoc: user.email);
         sendController.clear();
       } catch (e) {
         print(e);

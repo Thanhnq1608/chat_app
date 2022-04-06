@@ -1,3 +1,4 @@
+import 'package:chat_app/data/models/recent_contact.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -16,7 +17,8 @@ abstract class AuthServiceType {
   Future resetPassword({required String email});
   Future changePassword({required String email});
   Future<void> createUser({required userModel.User user});
-  Future<List<userModel.User>> getUserByEmail({required String email});
+  Future<List<userModel.User>> getUsersByName({required String name});
+  Future<userModel.User> getUserByEmail({required String email});
   Future<void> updateTokenUser({required String email});
   Future<void> sendNotificationMessage(
       {required dataNoti.Notification notification});

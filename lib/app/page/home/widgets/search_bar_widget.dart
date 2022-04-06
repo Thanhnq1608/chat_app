@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -16,7 +17,7 @@ class SearchBarWidget extends StatelessWidget {
     return TextFormField(
       controller: controller,
       cursorHeight: 25,
-      autofocus: true,
+      autofocus: false,
       textAlignVertical: TextAlignVertical.center,
       style: Theme.of(context).textTheme.headline6!.copyWith(
           fontSize: 18, fontWeight: FontWeight.w400, color: Colors.black),
@@ -29,13 +30,13 @@ class SearchBarWidget extends StatelessWidget {
         contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
         fillColor: Colors.white,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(100.0),
+          borderRadius: BorderRadius.circular(30),
         ),
         enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100.0),
+            borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(color: Colors.white)),
         focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100.0),
+            borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(color: Colors.white)),
       ),
     );

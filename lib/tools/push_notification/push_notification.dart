@@ -10,6 +10,7 @@ import 'package:chat_app/data/models/notification_data.dart';
 import 'package:chat_app/data/models/notification.dart' as localNoti;
 import 'package:chat_app/data/models/user.dart';
 import 'package:chat_app/data/services/auth_service.dart';
+import 'package:chat_app/tools/helper/error_handler.dart';
 import 'package:chat_app/tools/helper/show_local_push_notification.dart';
 import 'package:chat_app/tools/session_manager/session_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

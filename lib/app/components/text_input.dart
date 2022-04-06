@@ -5,11 +5,13 @@ class TextInput extends StatelessWidget {
       {Key? key,
       required this.controller,
       required this.obscureText,
+      this.autoFocus = false,
       this.textInputType})
       : super(key: key);
 
   final TextEditingController controller;
   final bool obscureText;
+  bool autoFocus;
   TextInputType? textInputType = TextInputType.text;
 
   @override
@@ -19,7 +21,8 @@ class TextInput extends StatelessWidget {
       keyboardType: textInputType,
       controller: controller,
       cursorColor: Colors.white,
-      cursorHeight: 15,
+      cursorHeight: 25,
+      autofocus: autoFocus,
       mouseCursor: MouseCursor.uncontrolled,
       style: Theme.of(context)
           .textTheme

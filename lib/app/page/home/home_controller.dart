@@ -1,21 +1,31 @@
+import 'dart:async';
+
 import 'package:chat_app/app/interfaces/auth_service_type.dart';
+import 'package:chat_app/app/interfaces/recent_contact_service_type.dart';
 import 'package:chat_app/app/routes/app_routes.dart';
+import 'package:chat_app/data/models/recent_contact.dart';
 import 'package:chat_app/data/models/user.dart';
+import 'package:chat_app/data/services/recent_contact_service.dart';
 import 'package:chat_app/tools/helper/error_handler.dart';
+import 'package:chat_app/tools/push_notification/push_notification.dart';
 import 'package:chat_app/tools/session_manager/session_manager.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
   final _sessionManager = Get.find<SessionManager>();
   final _authService = Get.find<AuthServiceType>();
+  final _recentContactService = Get.find<RecentContactServiceType>();
+  final _pushNotification = Get.find<PushNotification>();
   final TextEditingController searchController = TextEditingController();
 
   RxBool isLoading = false.obs;
-  // late StreamSubscription<List<User>> streamSubscription;
+  late StreamSubscription<List<RecentContact>> streamSubscription;
 
   RxList<User> users = RxList<User>();
+  RxList<RecentContact> recentContacts = RxList<RecentContact>();
+  RxInt size = 0.obs;
 
   Future<void> logout() async {
     try {
@@ -38,8 +48,33 @@ class HomeController extends GetxController {
     }
   }
 
+  Future<Stream<List<RecentContact>>> recentContact() async {
+    var contacts = await _recentContactService.recentContact();
+    print(contacts.length);
+    return contacts;
+  }
+
+  Future<User> getUser({required String email}) async {
+    try {
+      var users = await _authService.getUserByEmail(email: email);
+      return users;
+    } catch (e) {
+      ErrorHandler.current.handle(error: e);
+      rethrow;
+    }
+  }
+
   @override
   void onInit() async {
+    await loadProfile().then((value) async {
+      listenWhileClickNotifyWhenAppOff();
+    });
+    var recent = await recentContact();
+    streamSubscription = recent.listen((event) {
+      recentContacts.value = event;
+
+      recentContacts.sort((a, b) => a.sendTime.compareTo(b.sendTime));
+    });
     super.onInit();
   }
 
@@ -47,23 +82,38 @@ class HomeController extends GetxController {
   void onReady() async {
     // TODO: implement onReady
     super.onReady();
-    await loadProfile();
+
     searchController.addListener(() async {
-      if (searchController.text != "" || searchController.text.isNotEmpty) {
+      if (searchController.text == "" || searchController.text.isEmpty) {
+        users.value.clear();
+        size.value = users.value.length;
+        users.refresh();
+      } else {
         isLoading(true);
         users.value =
-            await _authService.getUserByEmail(email: searchController.text);
+            await _authService.getUsersByName(name: searchController.text);
+        size.value = users.value.length;
         isLoading(false);
         print(users.value.length);
-      } else {
-        users.value.clear();
       }
     });
+  }
+
+  Future<void> listenWhileClickNotifyWhenAppOff() async {
+    var message = await FirebaseMessaging.instance.getInitialMessage();
+    if (message == null) {
+      // ErrorHandler.current.handle(error: 'null rồi');
+      return;
+    }
+    var user = User.fromJson(message.data);
+    ErrorHandler.current.handle(error: user.email);
+    Get.toNamed(AppRoutes.MESSAGE, arguments: user);
   }
 
   @override
   void onClose() {
     searchController.dispose();
+    streamSubscription.cancel();
     super.onClose();
   }
 }

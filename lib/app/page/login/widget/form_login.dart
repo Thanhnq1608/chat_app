@@ -11,10 +11,13 @@ class FormLogin extends StatelessWidget {
   final TextInputType? textInputType;
   IconData icon = Icons.mail;
   final TitleFormType titleType;
+
+  bool autoFocus = false;
   FormLogin(
       {Key? key,
       required this.controller,
       required this.titleType,
+      this.autoFocus = false,
       this.textInputType})
       : super(key: key);
 
@@ -37,6 +40,7 @@ class FormLogin extends StatelessWidget {
           controller: controller,
           obscureText: titleType == TitleFormType.password ? true : false,
           textInputType: textInputType,
+          autoFocus: autoFocus,
         ),
       ),
     );

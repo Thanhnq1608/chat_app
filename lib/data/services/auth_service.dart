@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:chat_app/app/components/collection_name_firestore.dart';
 import 'package:chat_app/app/interfaces/auth_service_type.dart';
 import 'package:chat_app/data/models/notification.dart';
+import 'package:chat_app/data/models/recent_contact.dart';
 import 'package:chat_app/data/models/user.dart' as userModel;
 import 'package:chat_app/tools/helper/error_handler.dart';
 import 'package:chat_app/tools/session_manager/session_manager.dart';
@@ -35,8 +37,10 @@ class AuthService extends GetxService implements AuthServiceType {
   @override
   Future<userModel.User> getCurrentUser() async {
     final userLocal = await _auth.currentUser;
-    final docUser =
-        await _firestore.collection('users').doc(userLocal!.email).get();
+    final docUser = await _firestore
+        .collection(CollectionNameFirestore.getName(type: CollectionType.users))
+        .doc(userLocal!.email)
+        .get();
     final user = docUser.data();
     return _userFromFirebaseUser(user: userModel.User.fromJson(user!))!;
   }
@@ -48,8 +52,10 @@ class AuthService extends GetxService implements AuthServiceType {
     UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
     User? userCredential = result.user;
-    final docUser =
-        await _firestore.collection('users').doc(userCredential!.email).get();
+    final docUser = await _firestore
+        .collection(CollectionNameFirestore.getName(type: CollectionType.users))
+        .doc(userCredential!.email)
+        .get();
     final user = docUser.data();
 
     print('Result: $result');
@@ -85,7 +91,10 @@ class AuthService extends GetxService implements AuthServiceType {
   Future signOut() async {
     final user = await _sessionManager.currentUser();
     print(user.email);
-    _firestore.collection('users').doc(user.email).update({'token': ''});
+    _firestore
+        .collection(CollectionNameFirestore.getName(type: CollectionType.users))
+        .doc(user.email)
+        .update({'token': ''});
     _sessionManager.logout();
     timer?.cancel();
     return await _auth.signOut();
@@ -131,14 +140,17 @@ class AuthService extends GetxService implements AuthServiceType {
     Map<String, dynamic> userMap = user.toJson();
 
     //save user to firebase
-    await _firestore.collection('users').doc(addUser.email).set(userMap);
+    await _firestore
+        .collection(CollectionNameFirestore.getName(type: CollectionType.users))
+        .doc(addUser.email)
+        .set(userMap);
   }
 
   @override
-  Future<List<userModel.User>> getUserByEmail({required String email}) async {
+  Future<List<userModel.User>> getUsersByName({required String name}) async {
     final temp = await _firestore
-        .collection('users')
-        .where('name', isGreaterThan: email)
+        .collection(CollectionNameFirestore.getName(type: CollectionType.users))
+        .where('name', isGreaterThan: name)
         .get();
     return temp.docs.map((e) => userModel.User.fromJson(e.data())).toList();
   }
@@ -148,7 +160,7 @@ class AuthService extends GetxService implements AuthServiceType {
     var token = await _sessionManager.currentTokenFirebase();
     print(token);
     final result = await _firestore
-        .collection('users')
+        .collection(CollectionNameFirestore.getName(type: CollectionType.users))
         .doc(email)
         .update({'token': token});
     // result.
@@ -169,5 +181,18 @@ class AuthService extends GetxService implements AuthServiceType {
     var response = await client.post(url,
         headers: headers, body: json.encode(notification.toJson()));
     print('${response.statusCode}: ${response.body}');
+  }
+
+  @override
+  Future<userModel.User> getUserByEmail({required String email}) async {
+    final temp = await _firestore
+        .collection(CollectionNameFirestore.getName(type: CollectionType.users))
+        .doc(email)
+        .get();
+    if (temp.data() == null) {
+      return userModel.User(email: '', name: '', token: '', userId: '');
+    }
+    final user = userModel.User.fromJson(temp.data()!);
+    return user;
   }
 }
