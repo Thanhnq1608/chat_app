@@ -7,15 +7,17 @@ part of 'message.dart';
 // **************************************************************************
 
 Message _$MessageFromJson(Map<String, dynamic> json) => Message(
-      message: json['text'] as String,
-      sender: json['sender'] as String,
-      receiver: json['receiver'] as String,
+      message: json['message'] as String,
+      type: json['type'] as int,
       sendTime: json['send_time'] as String,
+      receiver: json['receiver'] as String,
+      sender: json['sender'] as String,
     );
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
-      'sender': instance.sender,
-      'text': instance.message,
+      'message': instance.message,
       'send_time': instance.sendTime,
+      'type': instance.type,
+      'sender': instance.sender,
       'receiver': instance.receiver,
     };

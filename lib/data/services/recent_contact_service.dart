@@ -49,6 +49,7 @@ class RecentContactService extends GetxService
       sendTime: contact.sendTime,
       email: user.email,
       name: user.name,
+      sender: contact.sender,
     );
     await _firestore
         .collection(CollectionNameFirestore.getName(

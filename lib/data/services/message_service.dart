@@ -1,37 +1,46 @@
 import 'dart:async';
 
+import 'package:chat_app/app/components/collection_name_firestore.dart';
 import 'package:chat_app/app/interfaces/message_service_type.dart';
 import 'package:chat_app/data/models/message.dart';
+import 'package:chat_app/data/models/user.dart';
+import 'package:chat_app/tools/session_manager/session_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 
 class MessageService extends GetxService implements MessageServiceType {
   final _firestore = FirebaseFirestore.instance;
+  final _sessionManager = Get.find<SessionManager>();
 
   @override
-  Future<List<Message>> getListMessage() async {
-    final querySnapshot = await _firestore.collection('message').get();
-    return querySnapshot.docs.map((e) => Message.fromJson(e.data())).toList();
-  }
-
-  @override
-  Future<void> sendMessage({required Message message}) async {
-    await _firestore.collection('message').add({
-      'text': message.message,
-      'sender': message.sender,
-      'receiver': message.receiver,
-      'send_time': message.sendTime,
-    });
+  Future<void> sendMessage(
+      {required Message message, required User user}) async {
+    final currentUser = await _sessionManager.currentUser();
+    await _firestore
+        .collection(
+            CollectionNameFirestore.getName(type: CollectionType.sender))
+        .doc(currentUser.email)
+        .collection(
+            CollectionNameFirestore.getName(type: CollectionType.receiver))
+        .doc(user.email)
+        .collection(
+            CollectionNameFirestore.getName(type: CollectionType.message))
+        .add(message.toJson());
   }
 
   @override
   Stream<List<Message>> listenMessagesFromReceiver(
-      {required String sender, required String receiver}) {
+      {required String currentUser, required String user}) {
     return _firestore
-        .collection('message')
-        .where('sender', isEqualTo: sender)
-        .where('receiver', isEqualTo: receiver)
+        .collection(
+            CollectionNameFirestore.getName(type: CollectionType.sender))
+        .doc(user)
+        .collection(
+            CollectionNameFirestore.getName(type: CollectionType.receiver))
+        .doc(currentUser)
+        .collection(
+            CollectionNameFirestore.getName(type: CollectionType.message))
         .orderBy('send_time')
         .snapshots()
         .map((snapshot) {
@@ -47,11 +56,16 @@ class MessageService extends GetxService implements MessageServiceType {
 
   @override
   Stream<List<Message>> listenMessagesFromSender(
-      {required String sender, required String receiver}) {
+      {required String currentUser, required String user}) {
     return _firestore
-        .collection('message')
-        .where('sender', isEqualTo: sender)
-        .where('receiver', isEqualTo: receiver)
+        .collection(
+            CollectionNameFirestore.getName(type: CollectionType.sender))
+        .doc(currentUser)
+        .collection(
+            CollectionNameFirestore.getName(type: CollectionType.receiver))
+        .doc(user)
+        .collection(
+            CollectionNameFirestore.getName(type: CollectionType.message))
         .orderBy('send_time')
         .snapshots()
         .map((snapshot) {

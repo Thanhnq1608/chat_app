@@ -42,6 +42,7 @@ class MessageDetailScreen extends StatelessWidget {
                   isSeen: true,
                   lastMessage: 'lastMessage',
                   sendTime: 'sendTime',
+                  sender: '',
                   email: controller.user.email,
                   name: 'name'));
         },

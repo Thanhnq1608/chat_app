@@ -18,11 +18,14 @@ class RecentContact {
   @JsonKey(name: 'send_time')
   final String sendTime;
 
+  final String sender;
+
   RecentContact(
       {required this.isSeen,
       required this.lastMessage,
       required this.sendTime,
       required this.email,
+      required this.sender,
       required this.name});
 
   factory RecentContact.fromJson(Map<String, dynamic> json) =>

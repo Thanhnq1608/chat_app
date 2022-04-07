@@ -4,21 +4,24 @@ part 'message.g.dart';
 
 @JsonSerializable()
 class Message {
-  String sender;
-
-  @JsonKey(name: 'text')
   String message;
 
   @JsonKey(name: 'send_time')
   String sendTime;
 
+  int type;
+
+  String sender;
+
   String receiver;
 
-  Message(
-      {required this.message,
-      required this.sender,
-      required this.receiver,
-      required this.sendTime});
+  Message({
+    required this.message,
+    required this.type,
+    required this.sendTime,
+    required this.receiver,
+    required this.sender,
+  });
 
   factory Message.fromJson(Map<String, dynamic> json) =>
       _$MessageFromJson(json);

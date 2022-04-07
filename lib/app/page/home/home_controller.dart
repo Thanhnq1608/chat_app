@@ -28,6 +28,9 @@ class HomeController extends GetxController {
   RxList<RecentContact> recentContacts = RxList<RecentContact>();
   RxInt size = 0.obs;
 
+  User currentUser =
+      User(userId: "userId", email: "email", name: "name", token: "token");
+
   Future<void> logout() async {
     try {
       await _authService.signOut();
@@ -50,7 +53,7 @@ class HomeController extends GetxController {
       final userProfile = await _authService.getCurrentUser();
       print(userProfile.email);
       users.value = await _authService.getUsersByName();
-      _sessionManager.updateProfile(userProfile);
+      await _sessionManager.updateProfile(userProfile);
       _authService.updateTokenUser(email: userProfile.email);
       print(userProfile.email);
     } catch (e) {
@@ -78,6 +81,7 @@ class HomeController extends GetxController {
   void onInit() async {
     await loadProfile().then((value) async {
       listenWhileClickNotifyWhenAppOff();
+      currentUser = await _sessionManager.currentUser();
     });
     var recent = await recentContact();
     streamSubscription = recent.listen((event) {

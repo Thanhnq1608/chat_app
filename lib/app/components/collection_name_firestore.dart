@@ -5,6 +5,8 @@ enum CollectionType {
   message,
   recent_contact,
   sub_recent,
+  sender,
+  receiver,
 }
 
 class CollectionNameFirestore {
@@ -13,11 +15,15 @@ class CollectionNameFirestore {
       case CollectionType.users:
         return 'users';
       case CollectionType.message:
-        return 'message';
+        return 'messages';
       case CollectionType.recent_contact:
         return 'recent_contact';
       case CollectionType.sub_recent:
         return 'recent';
+      case CollectionType.sender:
+        return 'sender';
+      case CollectionType.receiver:
+        return 'receiver';
     }
   }
 }

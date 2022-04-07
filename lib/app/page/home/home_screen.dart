@@ -157,6 +157,11 @@ class HomeScreen extends GetView<HomeController> {
               padding: EdgeInsets.zero,
               itemBuilder: (context, index) {
                 var recentContact = controller.recentContacts[index];
+                var senderName = recentContact.sender
+                            .compareTo(controller.currentUser.email) !=
+                        0
+                    ? recentContact.name
+                    : 'You';
                 return InkWell(
                   onTap: () async {
                     var user =
@@ -181,11 +186,11 @@ class HomeScreen extends GetView<HomeController> {
                                     fontSize: 18,
                                   ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8.0,
                         ),
                         Text(
-                          recentContact.lastMessage,
+                          '$senderName: ${recentContact.lastMessage}',
                           style:
                               Theme.of(context).textTheme.bodyText1!.copyWith(
                                     fontSize: 15,

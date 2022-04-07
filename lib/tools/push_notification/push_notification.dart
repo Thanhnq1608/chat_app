@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:chat_app/app/components/collection_name_firestore.dart';
 import 'package:chat_app/app/interfaces/auth_service_type.dart';
 import 'package:chat_app/app/routes/app_routes.dart';
 import 'package:chat_app/data/api/shared_preferences/shared_preferences.dart';
@@ -40,7 +41,10 @@ class PushNotification extends GetxService {
     final sessionManager = Get.find<SessionManager>();
 
     final _authService = Get.find<AuthServiceType>();
-    var userDoc = await _firestore.collection('users').doc(email).get();
+    var userDoc = await _firestore
+        .collection(CollectionNameFirestore.getName(type: CollectionType.users))
+        .doc(email)
+        .get();
     if (userDoc.data() == null) {
       return;
     }

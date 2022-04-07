@@ -41,12 +41,14 @@ class MessageDetailController extends GetxController {
       try {
         _messageService.sendMessage(
           message: Message(
-            message: sendController.text,
             sender: currentUser.email,
             receiver: user.email,
+            message: sendController.text,
+            type: 1,
             sendTime:
                 DateFormat('yyyy/MM/dd \- kk:mm:ss').format(DateTime.now()),
           ),
+          user: user,
         );
         _authService.sendNotificationMessage(
           notification: localNoti.Notification(
@@ -67,7 +69,8 @@ class MessageDetailController extends GetxController {
                 email: user.email,
                 sendTime:
                     DateFormat('yyyy/MM/dd \- kk:mm:ss').format(DateTime.now()),
-                name: user.name),
+                name: user.name,
+                sender: currentUser.email),
             emailDoc: user.email);
         sendController.clear();
       } catch (e) {
@@ -78,17 +81,17 @@ class MessageDetailController extends GetxController {
   }
 
   Stream<List<Message>> getLastMessageSender(
-      {required String sender, required String receiver}) {
+      {required String currentUser, required String user}) {
     var listMessages = _messageService.listenMessagesFromSender(
-        sender: sender, receiver: receiver);
+        currentUser: currentUser, user: user);
     print(listMessages.length);
     return listMessages;
   }
 
   Stream<List<Message>> getLastMessageReceiver(
-      {required String sender, required String receiver}) {
+      {required String currentUser, required String user}) {
     var listMessages = _messageService.listenMessagesFromReceiver(
-        sender: sender, receiver: receiver);
+        currentUser: currentUser, user: user);
     print(listMessages.length);
     return listMessages;
   }
@@ -107,14 +110,14 @@ class MessageDetailController extends GetxController {
     await getCurrentUser();
 
     streamSubcriptionSender =
-        getLastMessageSender(receiver: user.email, sender: currentUser.email)
+        getLastMessageSender(currentUser: currentUser.email, user: user.email)
             .listen((event) {
       listMessages.addAll(event);
 
       listMessages.sort((a, b) => b.sendTime.compareTo(a.sendTime));
     });
     streamSubcriptionReceiver =
-        getLastMessageReceiver(sender: user.email, receiver: currentUser.email)
+        getLastMessageReceiver(currentUser: currentUser.email, user: user.email)
             .listen((event) {
       listMessages.addAll(event);
 
