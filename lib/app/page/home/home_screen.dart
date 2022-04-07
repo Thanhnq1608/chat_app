@@ -86,7 +86,7 @@ class HomeScreen extends GetView<HomeController> {
             hintText: 'Search by name',
             onClickToIcon: () {}),
         Obx(
-          () => controller.users.value.length == 0
+          () => controller.usersSearch.value.length == 0
               ? Container()
               : Container(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -98,9 +98,9 @@ class HomeScreen extends GetView<HomeController> {
                       : ListView.separated(
                           padding: EdgeInsets.zero,
                           shrinkWrap: true,
-                          itemCount: controller.users.value.length,
+                          itemCount: controller.usersSearch.value.length,
                           itemBuilder: (context, index) {
-                            var user = controller.users.value[index];
+                            var user = controller.usersSearch.value[index];
                             return InkWell(
                               onTap: () {
                                 Get.toNamed(AppRoutes.MESSAGE, arguments: user);

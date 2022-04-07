@@ -24,6 +24,7 @@ class HomeController extends GetxController {
   late StreamSubscription<List<RecentContact>> streamSubscription;
 
   RxList<User> users = RxList<User>();
+  RxList<User> usersSearch = RxList<User>();
   RxList<RecentContact> recentContacts = RxList<RecentContact>();
   RxInt size = 0.obs;
 
@@ -48,6 +49,7 @@ class HomeController extends GetxController {
     try {
       final userProfile = await _authService.getCurrentUser();
       print(userProfile.email);
+      users.value = await _authService.getUsersByName();
       _sessionManager.updateProfile(userProfile);
       _authService.updateTokenUser(email: userProfile.email);
       print(userProfile.email);
@@ -90,16 +92,15 @@ class HomeController extends GetxController {
   void onReady() async {
     // TODO: implement onReady
     super.onReady();
-
     searchController.addListener(() async {
       if (searchController.text == "" || searchController.text.isEmpty) {
-        users.value.clear();
-        size.value = users.value.length;
-        users.refresh();
+        usersSearch.value.clear();
+        usersSearch.refresh();
       } else {
         isLoading(true);
-        users.value =
-            await _authService.getUsersByName(name: searchController.text);
+        usersSearch.value = users.value
+            .where((user) => user.name.contains(searchController.text))
+            .toList();
         size.value = users.value.length;
         isLoading(false);
         print(users.value.length);

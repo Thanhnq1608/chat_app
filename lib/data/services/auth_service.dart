@@ -147,10 +147,9 @@ class AuthService extends GetxService implements AuthServiceType {
   }
 
   @override
-  Future<List<userModel.User>> getUsersByName({required String name}) async {
+  Future<List<userModel.User>> getUsersByName() async {
     final temp = await _firestore
         .collection(CollectionNameFirestore.getName(type: CollectionType.users))
-        .where('name', isGreaterThan: name)
         .get();
     return temp.docs.map((e) => userModel.User.fromJson(e.data())).toList();
   }

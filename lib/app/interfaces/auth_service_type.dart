@@ -17,7 +17,7 @@ abstract class AuthServiceType {
   Future resetPassword({required String email});
   Future changePassword({required String email});
   Future<void> createUser({required userModel.User user});
-  Future<List<userModel.User>> getUsersByName({required String name});
+  Future<List<userModel.User>> getUsersByName();
   Future<userModel.User> getUserByEmail({required String email});
   Future<void> updateTokenUser({required String email});
   Future<void> sendNotificationMessage(
