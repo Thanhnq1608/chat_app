@@ -30,6 +30,7 @@ class AuthService extends GetxService implements AuthServiceType {
             userId: user.userId,
             email: user.email,
             name: user.name,
+            avatar: user.avatar,
             token: user.token)
         : null;
   }

@@ -22,8 +22,11 @@ class SfStorage extends GetxService {
       return;
     }
 
-    final sfUser =
-        SfUser(userId: user.userId, email: user.email, name: user.name);
+    final sfUser = SfUser(
+        userId: user.userId,
+        email: user.email,
+        name: user.name,
+        avatar: user.avatar);
 
     await _spf.setString(
       _getRawKey(SfKeys.userProfile),
@@ -79,6 +82,7 @@ class SfStorage extends GetxService {
         userId: sfUser.userId,
         email: sfUser.email,
         name: sfUser.name,
+        avatar: sfUser.avatar,
         token: sfTokenFirebase.token);
 
     return currentUser;

@@ -20,11 +20,14 @@ class RecentContact {
 
   final String sender;
 
+  final String? avatar;
+
   RecentContact(
       {required this.isSeen,
       required this.lastMessage,
       required this.sendTime,
       required this.email,
+      this.avatar,
       required this.sender,
       required this.name});
 

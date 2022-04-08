@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:chat_app/app/interfaces/auth_service_type.dart';
 import 'package:chat_app/app/interfaces/recent_contact_service_type.dart';
+import 'package:chat_app/app/interfaces/upload_image_service_type.dart';
 import 'package:chat_app/app/routes/app_routes.dart';
 import 'package:chat_app/data/models/recent_contact.dart';
 import 'package:chat_app/data/models/user.dart';
@@ -12,24 +14,32 @@ import 'package:chat_app/tools/session_manager/session_manager.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class HomeController extends GetxController {
   final _sessionManager = Get.find<SessionManager>();
   final _authService = Get.find<AuthServiceType>();
   final _recentContactService = Get.find<RecentContactServiceType>();
   final _pushNotification = Get.find<PushNotification>();
+  final _uploadImageService = Get.find<UploadImageServiceType>();
   final TextEditingController searchController = TextEditingController();
 
+  File? image;
+
   RxBool isLoading = false.obs;
+  RxBool isLoadingAvatar = false.obs;
   late StreamSubscription<List<RecentContact>> streamSubscription;
 
   RxList<User> users = RxList<User>();
   RxList<User> usersSearch = RxList<User>();
   RxList<RecentContact> recentContacts = RxList<RecentContact>();
-  RxInt size = 0.obs;
 
-  User currentUser =
-      User(userId: "userId", email: "email", name: "name", token: "token");
+  Rx<User> currentUser = User(
+    userId: "userId",
+    email: "email",
+    name: "name",
+    token: "token",
+  ).obs;
 
   Future<void> logout() async {
     try {
@@ -61,6 +71,33 @@ class HomeController extends GetxController {
     }
   }
 
+  Future<void> chooseFile() async {
+    await ImagePicker.platform
+        .pickImage(source: ImageSource.gallery)
+        .then((image) {
+      if (image != null) {
+        this.image = File(image.path);
+        print(image.path);
+      }
+    });
+  }
+
+  Future<void> uploadAvatar({required File imageFile}) async {
+    try {
+      isLoadingAvatar(true);
+      var avatar = await _uploadImageService.uploadImageToFirebaseStorage(
+          image: imageFile);
+      var newUser = currentUser.value.clone()..avatar = avatar;
+      currentUser.value = newUser;
+      await _uploadImageService.updateAvatarUser(
+          avatar: currentUser.value.avatar!);
+      await _sessionManager.updateProfile(currentUser.value);
+      isLoadingAvatar(false);
+    } catch (e) {
+      ErrorHandler.current.handle(error: e);
+    }
+  }
+
   Future<Stream<List<RecentContact>>> recentContact() async {
     var contacts = await _recentContactService.recentContact();
     print(contacts.length);
@@ -81,7 +118,7 @@ class HomeController extends GetxController {
   void onInit() async {
     await loadProfile().then((value) async {
       listenWhileClickNotifyWhenAppOff();
-      currentUser = await _sessionManager.currentUser();
+      currentUser.value = await _sessionManager.currentUser();
     });
     var recent = await recentContact();
     streamSubscription = recent.listen((event) {
@@ -105,7 +142,6 @@ class HomeController extends GetxController {
         usersSearch.value = users.value
             .where((user) => user.name.contains(searchController.text))
             .toList();
-        size.value = users.value.length;
         isLoading(false);
         print(users.value.length);
       }

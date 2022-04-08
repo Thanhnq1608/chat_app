@@ -12,6 +12,7 @@ RecentContact _$RecentContactFromJson(Map<String, dynamic> json) =>
       lastMessage: json['last_message'] as String,
       sendTime: json['send_time'] as String,
       email: json['email'] as String,
+      avatar: json['avatar'] as String?,
       sender: json['sender'] as String,
       name: json['user_name'] as String,
     );
@@ -24,4 +25,5 @@ Map<String, dynamic> _$RecentContactToJson(RecentContact instance) =>
       'email': instance.email,
       'send_time': instance.sendTime,
       'sender': instance.sender,
+      'avatar': instance.avatar,
     };

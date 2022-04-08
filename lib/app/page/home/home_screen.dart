@@ -1,7 +1,6 @@
 import 'package:chat_app/app/components/loading_indicator.dart';
 import 'package:chat_app/app/page/home/home_controller.dart';
-import 'package:chat_app/app/page/home/widgets/home_app_bar.dart';
-import 'package:chat_app/app/page/home/widgets/recent_contacts.dart';
+import 'package:chat_app/app/page/home/widgets/home_item_list_widget.dart';
 import 'package:chat_app/app/page/home/widgets/search_bar_widget.dart';
 import 'package:chat_app/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -46,29 +45,93 @@ class HomeScreen extends GetView<HomeController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Chat with \nyour friends',
-                  textAlign: TextAlign.left,
-                  style: Theme.of(context).textTheme.headline1!.copyWith(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+          Obx(
+            () => Row(
+              children: [
+                InkWell(
+                  onTap: () async {
+                    await controller.chooseFile();
+                    if (controller.image != null) {
+                      await controller.uploadAvatar(
+                          imageFile: controller.image!);
+                    }
+                  },
+                  child: controller.currentUser.value.avatar == null
+                      ? Container(
+                          height: 60,
+                          width: 60,
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            // shape: BoxShape.circle,
+                            image: DecorationImage(
+                                image: AssetImage(
+                                    'assets/images/avatar_default_icon.png')),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(50),
+                            ),
+                          ),
+                        )
+                      : controller.isLoadingAvatar.value
+                          ? Container(
+                              height: 60,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                // shape: BoxShape.circle,
+                                image: DecorationImage(
+                                    image: AssetImage(
+                                        'assets/images/image_loading.gif')),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(50),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              height: 60,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                // shape: BoxShape.circle,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(50),
+                                ),
+                              ),
+                              child: ClipOval(
+                                child: FadeInImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(
+                                      controller.currentUser.value.avatar!),
+                                  placeholder: AssetImage(
+                                      'assets/images/image_loading.gif'),
+                                ),
+                              ),
+                            ),
                 ),
-              ),
-              IconButton(
-                onPressed: () async {
-                  await controller.logout();
-                },
-                icon: Icon(
-                  Icons.exit_to_app_outlined,
-                  color: Colors.white,
+                SizedBox(
+                  width: 15,
                 ),
-              ),
-            ],
+                Expanded(
+                  child: Text(
+                    controller.currentUser.value.name,
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.headline1!.copyWith(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    await controller.logout();
+                  },
+                  icon: Icon(
+                    Icons.exit_to_app_outlined,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ),
           SizedBox(
             height: 100,
@@ -158,7 +221,7 @@ class HomeScreen extends GetView<HomeController> {
               itemBuilder: (context, index) {
                 var recentContact = controller.recentContacts[index];
                 var senderName = recentContact.sender
-                            .compareTo(controller.currentUser.email) !=
+                            .compareTo(controller.currentUser.value.email) !=
                         0
                     ? recentContact.name
                     : 'You';
@@ -170,38 +233,9 @@ class HomeScreen extends GetView<HomeController> {
                         await Get.toNamed(AppRoutes.MESSAGE, arguments: user);
                     await controller.seenMessage(contact: result);
                   },
-                  child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          recentContact.name,
-                          style:
-                              Theme.of(context).textTheme.headline5!.copyWith(
-                                    color: Colors.black,
-                                    fontWeight: recentContact.isSeen
-                                        ? FontWeight.w300
-                                        : FontWeight.bold,
-                                    letterSpacing: 1,
-                                    fontSize: 18,
-                                  ),
-                        ),
-                        const SizedBox(
-                          height: 8.0,
-                        ),
-                        Text(
-                          '$senderName: ${recentContact.lastMessage}',
-                          style:
-                              Theme.of(context).textTheme.bodyText1!.copyWith(
-                                    fontSize: 15,
-                                    color: Colors.black,
-                                    fontWeight: recentContact.isSeen
-                                        ? FontWeight.w300
-                                        : FontWeight.bold,
-                                  ),
-                        )
-                      ],
-                    ),
+                  child: HomeItemListWidget(
+                    recentContact: recentContact,
+                    senderName: senderName,
                   ),
                 );
               },

@@ -70,6 +70,7 @@ class MessageDetailController extends GetxController {
                 sendTime:
                     DateFormat('yyyy/MM/dd \- kk:mm:ss').format(DateTime.now()),
                 name: user.name,
+                avatar: user.avatar,
                 sender: currentUser.email),
             emailDoc: user.email);
         sendController.clear();
