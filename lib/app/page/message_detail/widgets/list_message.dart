@@ -1,5 +1,6 @@
 import 'package:chat_app/data/models/message.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ListMessage extends StatelessWidget {
   final List<Message> messages;
@@ -35,39 +36,69 @@ class ListMessage extends StatelessWidget {
 
   Widget _item(BuildContext context, Message message) {
     bool isMe = message.sender == currentUser;
-    return Container(
-      child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        children: [
-          Text(
-            message.sender,
-            style: Theme.of(context).textTheme.headline6!.copyWith(
-                  color: Colors.black54,
-                  fontSize: 10,
-                ),
-          ),
-          Container(
-            constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.8),
-            padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-            decoration: BoxDecoration(
-              color: isMe ? Colors.blue : Colors.black12.withOpacity(0.1),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20.0),
-                topLeft: isMe ? Radius.circular(20.0) : Radius.circular(0.0),
-                bottomRight: Radius.circular(20.0),
-                topRight: isMe ? Radius.circular(0.0) : Radius.circular(20.0),
-              ),
-            ),
-            child: Text(
-              message.message,
+    RxBool isClickToMessage = false.obs;
+    return Obx(
+      () => Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment:
+              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            isClickToMessage.value
+                ? Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        message.sendTime,
+                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w300,
+                            ),
+                      ),
+                    ),
+                  )
+                : Container(),
+            Text(
+              message.sender,
               style: Theme.of(context).textTheme.headline6!.copyWith(
-                    color: isMe ? Colors.white : Colors.black,
+                    color: Colors.black54,
+                    fontSize: 10,
                   ),
             ),
-          )
-        ],
+            InkWell(
+              onTap: () {
+                if (isClickToMessage.value) {
+                  isClickToMessage(false);
+                } else {
+                  isClickToMessage(true);
+                }
+              },
+              child: Container(
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.8),
+                padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                decoration: BoxDecoration(
+                  color: isMe ? Colors.blue : Colors.black12.withOpacity(0.1),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20.0),
+                    topLeft:
+                        isMe ? Radius.circular(20.0) : Radius.circular(0.0),
+                    bottomRight: Radius.circular(20.0),
+                    topRight:
+                        isMe ? Radius.circular(0.0) : Radius.circular(20.0),
+                  ),
+                ),
+                child: Text(
+                  message.message,
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                        color: isMe ? Colors.white : Colors.black,
+                      ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

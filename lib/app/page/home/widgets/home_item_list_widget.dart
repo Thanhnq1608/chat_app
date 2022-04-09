@@ -1,5 +1,6 @@
 import 'package:chat_app/data/models/recent_contact.dart';
 import 'package:chat_app/data/models/user.dart';
+import 'package:chat_app/tools/helper/show_send_time_message.dart';
 import 'package:flutter/material.dart';
 
 class HomeItemListWidget extends StatelessWidget {
@@ -70,16 +71,33 @@ class HomeItemListWidget extends StatelessWidget {
               const SizedBox(
                 height: 8.0,
               ),
-              Text(
-                '$senderName: ${recentContact.lastMessage}',
-                style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      fontSize: 15,
-                      color: Colors.black,
-                      fontWeight: recentContact.isSeen
-                          ? FontWeight.w300
-                          : FontWeight.bold,
-                    ),
-              )
+              Row(
+                children: [
+                  Text(
+                    '$senderName: ${recentContact.lastMessage}',
+                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                          fontSize: 15,
+                          color: Colors.black,
+                          fontWeight: recentContact.isSeen
+                              ? FontWeight.w300
+                              : FontWeight.bold,
+                        ),
+                  ),
+                  SizedBox(
+                    width: 15.0,
+                  ),
+                  Text(
+                    ShowSendTimeMessage.getTime(time: recentContact.sendTime),
+                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                          fontSize: 15,
+                          color: Colors.black,
+                          fontWeight: recentContact.isSeen
+                              ? FontWeight.w300
+                              : FontWeight.bold,
+                        ),
+                  ),
+                ],
+              ),
             ],
           ),
         ],
