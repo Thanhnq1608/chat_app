@@ -3,6 +3,7 @@ import 'package:chat_app/app/page/message_detail/widgets/list_message.dart';
 import 'package:chat_app/app/page/message_detail/widgets/text_input_message.dart';
 import 'package:chat_app/data/models/message.dart';
 import 'package:chat_app/data/models/recent_contact.dart';
+import 'package:chat_app/data/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,21 +12,27 @@ class MessageDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF5157b2),
-      appBar: _appBar(context),
-      body: Container(
-        child: Column(
-          children: [
-            _header(context),
-            SizedBox(
-              height: 20,
-            ),
-            Obx(
-              () => _body(context, controller.listMessages.value,
-                  controller.currentUser.email),
-            ),
-          ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        backgroundColor: Color(0xFF5157b2),
+        appBar: _appBar(context),
+        body: Container(
+          child: Column(
+            children: [
+              _header(context, user: controller.user),
+              SizedBox(
+                height: 20,
+              ),
+              Obx(
+                () => _body(
+                  context,
+                  controller.listMessages.value,
+                  controller.currentUser.email,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -63,11 +70,15 @@ class MessageDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _header(BuildContext context) {
+  Widget _header(BuildContext context, {required User user}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
       child: Row(
         children: [
+          _loadAvatar(context, user: user),
+          SizedBox(
+            width: 10,
+          ),
           Expanded(
             child: Container(
               width: context.width / 3,
@@ -126,5 +137,40 @@ class MessageDetailScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _loadAvatar(BuildContext context, {required User user}) {
+    return user.avatar == null
+        ? Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              // shape: BoxShape.circle,
+              image: DecorationImage(
+                  image: AssetImage('assets/images/avatar_default_icon.png')),
+              borderRadius: BorderRadius.all(
+                Radius.circular(50),
+              ),
+            ),
+          )
+        : Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              // shape: BoxShape.circle,
+              borderRadius: BorderRadius.all(
+                Radius.circular(50),
+              ),
+            ),
+            child: ClipOval(
+              child: FadeInImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(user.avatar!),
+                placeholder: AssetImage('assets/images/image_loading.gif'),
+              ),
+            ),
+          );
   }
 }

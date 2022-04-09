@@ -4,13 +4,11 @@ import 'package:get/get.dart';
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController controller;
   final String? hintText;
-  final Function onClickToIcon;
-  SearchBarWidget(
-      {Key? key,
-      required this.controller,
-      this.hintText,
-      required this.onClickToIcon})
-      : super(key: key);
+  SearchBarWidget({
+    Key? key,
+    required this.controller,
+    this.hintText,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -89,9 +89,8 @@ class HomeController extends GetxController {
           image: imageFile);
       var newUser = currentUser.value.clone()..avatar = avatar;
       currentUser.value = newUser;
-      await _uploadImageService.updateAvatarUser(
-          avatar: currentUser.value.avatar!);
-      await _sessionManager.updateProfile(currentUser.value);
+      _uploadImageService.updateAvatarUser(avatar: currentUser.value.avatar!);
+      _sessionManager.updateProfile(currentUser.value);
       isLoadingAvatar(false);
     } catch (e) {
       ErrorHandler.current.handle(error: e);

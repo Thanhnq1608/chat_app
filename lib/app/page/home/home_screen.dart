@@ -145,9 +145,9 @@ class HomeScreen extends GetView<HomeController> {
     return Column(
       children: [
         SearchBarWidget(
-            controller: controller.searchController,
-            hintText: 'Search by name',
-            onClickToIcon: () {}),
+          controller: controller.searchController,
+          hintText: 'Search by name',
+        ),
         Obx(
           () => controller.usersSearch.value.length == 0
               ? Container()
