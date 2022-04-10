@@ -2,6 +2,7 @@ import 'package:chat_app/data/api/shared_preferences/shared_preferences.dart';
 import 'package:chat_app/data/services/auth_service.dart';
 import 'package:chat_app/data/models/user.dart';
 import 'package:chat_app/tools/helper/error_handler.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class SessionManager extends GetxService {
@@ -16,6 +17,10 @@ class SessionManager extends GetxService {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<void> updateIsInMessage({required String? user}) async {
+    await sfStorage.setIsInMessage(user: user);
   }
 
   Future<User> currentUser() async {

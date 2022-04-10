@@ -103,11 +103,18 @@ class PushNotification extends GetxService {
         ?.createNotificationChannel(channel);
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print('Got a message whilst in the foreground!');
-      print('Message data: ${message.data}');
-      await ShowLocalPushNotification(
-              flutterLocalNotificationsPlugin: flutterLocalNotificationsPlugin)
-          .showLocalPushNotification(message);
+      var user = await _sfStorage.getIsInMessage();
+      String userSentNotification =
+          NotificationData.fromJson(message.data).sender;
+
+      if (user == null || user.compareTo(userSentNotification) != 0) {
+        print('Got a message whilst in the foreground!');
+        print('Message data ${user}: ${message.data}');
+        await ShowLocalPushNotification(
+                flutterLocalNotificationsPlugin:
+                    flutterLocalNotificationsPlugin)
+            .showLocalPushNotification(message);
+      }
     });
   }
 

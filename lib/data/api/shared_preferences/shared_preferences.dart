@@ -6,7 +6,11 @@ import 'package:chat_app/data/models/user.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum SfKeys { userProfile, tokenFirebase }
+enum SfKeys {
+  userProfile,
+  tokenFirebase,
+  isInMessage,
+}
 
 class SfStorage extends GetxService {
   late SharedPreferences _spf;
@@ -48,6 +52,23 @@ class SfStorage extends GetxService {
         sfTokenFirebase.toJson(),
       ),
     );
+  }
+
+  Future<void> setIsInMessage({required String? user}) async {
+    if (user == null || user.isEmpty) {
+      await _spf.remove(_getRawKey(SfKeys.isInMessage));
+      return;
+    }
+    await _spf.setString(
+      _getRawKey(SfKeys.isInMessage),
+      user,
+    );
+  }
+
+  Future<String?> getIsInMessage() async {
+    String? user = _spf.getString(_getRawKey(SfKeys.isInMessage));
+
+    return user;
   }
 
   Future<String?> getTokenFirebase() async {
@@ -94,6 +115,8 @@ class SfStorage extends GetxService {
         return 'user_profile';
       case SfKeys.tokenFirebase:
         return 'token_firebase';
+      case SfKeys.isInMessage:
+        return 'is_in_message';
     }
   }
 }

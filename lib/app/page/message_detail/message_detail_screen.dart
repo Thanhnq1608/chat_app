@@ -43,7 +43,7 @@ class MessageDetailScreen extends StatelessWidget {
       backgroundColor: Color(0xFF5157b2),
       elevation: 0,
       leading: TextButton(
-        onPressed: () {
+        onPressed: () async {
           Get.back(
               result: RecentContact(
                   isSeen: true,
@@ -52,6 +52,7 @@ class MessageDetailScreen extends StatelessWidget {
                   sender: '',
                   email: controller.user.email,
                   name: 'name'));
+          await controller.updateIsInMessage(user: null);
         },
         child: Text(
           'Back',

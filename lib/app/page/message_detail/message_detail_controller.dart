@@ -10,7 +10,6 @@ import 'package:chat_app/data/models/user.dart';
 import 'package:chat_app/tools/helper/error_handler.dart';
 import 'package:chat_app/tools/push_notification/push_notification.dart';
 import 'package:chat_app/tools/session_manager/session_manager.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -97,6 +96,14 @@ class MessageDetailController extends GetxController {
     return listMessages;
   }
 
+  Future<void> updateIsInMessage({required String? user}) async {
+    try {
+      await _sessionManager.updateIsInMessage(user: user);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<void> getCurrentUser() async {
     try {
       currentUser = await _sessionManager.currentUser();
@@ -109,6 +116,8 @@ class MessageDetailController extends GetxController {
   void onInit() async {
     sendController = TextEditingController();
     await getCurrentUser();
+
+    await updateIsInMessage(user: user.email);
 
     streamSubcriptionSender =
         getLastMessageSender(currentUser: currentUser.email, user: user.email)

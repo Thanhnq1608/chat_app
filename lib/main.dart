@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:chat_app/app/app_bindings.dart';
 import 'package:chat_app/app/routes/app_pages.dart';
-import 'package:chat_app/app/routes/app_routes.dart';
 import 'package:chat_app/core/app_theme.dart';
 import 'package:chat_app/data/api/shared_preferences/shared_preferences.dart';
-import 'package:chat_app/data/models/notification_data.dart';
 import 'package:chat_app/tools/helper/show_local_push_notification.dart';
 import 'package:chat_app/tools/push_notification/push_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -27,7 +23,10 @@ Future<void> initServices() async {
   print('starting services ...');
 
   final app = await Firebase.initializeApp();
-  await Get.putAsync(() => SfStorage().intial());
+  final sfStorage = await Get.putAsync(() => SfStorage().intial());
+
+  await sfStorage.setIsInMessage(user: null);
+
   final pushNotificationManager = PushNotification();
   await pushNotificationManager.configure();
   Get.put(pushNotificationManager);
