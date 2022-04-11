@@ -32,8 +32,7 @@ class MessageDetailController extends GetxController {
 
   RxList<Message> listMessagesUI = <Message>[].obs;
 
-  User currentUser =
-      User(userId: 'userId', email: 'email', name: '', token: '');
+  User currentUser = User(userId: '', email: '', name: '', token: '');
 
   Future<void> sendMessage() async {
     if (sendController.text.isNotEmpty) {
@@ -45,7 +44,7 @@ class MessageDetailController extends GetxController {
             message: sendController.text,
             type: 1,
             sendTime:
-                DateFormat('yyyy/MM/dd \- kk:mm:ss').format(DateTime.now()),
+                DateFormat('yyyy/MM/dd \- HH:mm:ss').format(DateTime.now()),
           ),
           user: user,
         );
@@ -67,7 +66,7 @@ class MessageDetailController extends GetxController {
                 lastMessage: sendController.text,
                 email: user.email,
                 sendTime:
-                    DateFormat('yyyy/MM/dd \- kk:mm:ss').format(DateTime.now()),
+                    DateFormat('yyyy/MM/dd \- HH:mm:ss').format(DateTime.now()),
                 name: user.name,
                 avatar: user.avatar,
                 sender: currentUser.email),
