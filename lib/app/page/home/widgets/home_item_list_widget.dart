@@ -72,9 +72,11 @@ class HomeItemListWidget extends StatelessWidget {
                 height: 8.0,
               ),
               Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    '$senderName: ${recentContact.lastMessage}',
+                    senderName + ': ',
                     style: Theme.of(context).textTheme.bodyText1!.copyWith(
                           fontSize: 15,
                           color: Colors.black,
@@ -82,6 +84,21 @@ class HomeItemListWidget extends StatelessWidget {
                               ? FontWeight.w300
                               : FontWeight.bold,
                         ),
+                  ),
+                  Container(
+                    constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.45),
+                    child: Text(
+                      recentContact.lastMessage,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontSize: 15,
+                            color: Colors.black,
+                            fontWeight: recentContact.isSeen
+                                ? FontWeight.w300
+                                : FontWeight.bold,
+                          ),
+                    ),
                   ),
                   SizedBox(
                     width: 15.0,
