@@ -169,9 +169,6 @@ class AuthService extends GetxService implements AuthServiceType {
   @override
   Future<void> sendNotificationMessage(
       {required Notification notification}) async {
-    // await http.request('https://fcm.googleapis.com/fcm/send',
-    //     options: Options(method: 'POST'),
-    //     queryParameters: notification.toJson());
     var url = Uri.parse('https://fcm.googleapis.com/fcm/send');
     var headers = {
       'Content-Type': 'application/json; charset=UTF-8',

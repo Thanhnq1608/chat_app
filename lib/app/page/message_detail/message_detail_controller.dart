@@ -43,8 +43,7 @@ class MessageDetailController extends GetxController {
             receiver: user.email,
             message: sendController.text,
             type: 1,
-            sendTime:
-                DateFormat('yyyy/MM/dd \- HH:mm:ss').format(DateTime.now()),
+            sendTime: _formatDateTime(time: DateTime.now()),
           ),
           user: user,
         );
@@ -65,8 +64,7 @@ class MessageDetailController extends GetxController {
                 isSeen: false,
                 lastMessage: sendController.text,
                 email: user.email,
-                sendTime:
-                    DateFormat('yyyy/MM/dd \- HH:mm:ss').format(DateTime.now()),
+                sendTime: _formatDateTime(time: DateTime.now()),
                 name: user.name,
                 avatar: user.avatar,
                 sender: currentUser.email),
@@ -146,5 +144,15 @@ class MessageDetailController extends GetxController {
     streamSubcriptionSender.cancel();
     streamSubcriptionReceiver.cancel();
     super.onClose();
+  }
+
+  String _formatDateTime({required DateTime time}) {
+    String dateTime = DateFormat('yyyy/MM/dd - HH:mm:ss').format(time);
+    DateTime formatDate = DateFormat('yyyy/MM/dd - HH:mm:ss').parse(dateTime);
+    if (formatDate.hour + 1 == 24) {
+      return '${formatDate.year}/${formatDate.month}/${formatDate.day} - 00:${formatDate.minute}:${formatDate.second}';
+    }
+
+    return dateTime;
   }
 }
